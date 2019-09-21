@@ -10497,11 +10497,11 @@ window.addEventListener("load", function() {
     ec(Mm, "select", function(a) { a = a.target.getParent();
         an(di(a, a.Nd)) });
     Y.xc = window.ace.edit("editor");
-    Y.xc.setTheme("ace/theme/chrome");
+    Y.xc.setTheme("ace/theme/xcode");
     Y.xc.setShowPrintMargin(!1);
     f = Y.xc.getSession();
     f.setMode("ace/mode/javascript");
-    f.setTabSize(2);
+    f.setTabSize(4);
     f.setUseSoftTabs(!0);
     f.on("change", bn);
     Y.xc.setValue("cannon(0, 70);", -1);
