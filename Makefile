@@ -4,11 +4,11 @@
 
 USER_APPS = puzzle maze bird turtle movie pond/docs pond/tutor pond/duck
 ALL_JSON = ./ puzzle maze bird turtle movie pond/docs pond pond/tutor pond/duck
-ALL_TEMPLATES = appengine/template.soy,appengine/puzzle/template.soy,appengine/maze/template.soy,appengine/bird/template.soy,appengine/turtle/template.soy,appengine/movie/template.soy,appengine/music/template.soy,appengine/pond/docs/template.soy,appengine/pond/template.soy,appengine/pond/tutor/template.soy,appengine/pond/duck/template.soy,appengine/gallery/template.soy
+ALL_TEMPLATES = appengine/templates/template.soy,appengine/templates/puzzle/template.soy,appengine/templates/maze/template.soy,appengine/templates/bird/template.soy,appengine/templates/turtle/template.soy,appengine/templates/movie/template.soy,appengine/templates/pond/docs/template.soy,appengine/templates/pond/template.soy,appengine/templates/pond/tutor/template.soy,appengine/templates/pond/duck/template.soy,appengine/templates/gallery/template.soy
 
 APP_ENGINE_THIRD_PARTY = appengine/third-party
-SOY_COMPILER = java -jar /mnt/c/Users/viet1/Downloads/Programs/blockly-games/third-party-downloads/SoyToJsSrcCompiler.jar --shouldProvideRequireSoyNamespaces --isUsingIjData
-SOY_EXTRACTOR = java -jar /mnt/c/Users/viet1/Downloads/Programs/blockly-games/third-party-downloads/SoyMsgExtractor.jar
+SOY_COMPILER = java -jar third-party-downloads/SoyToJsSrcCompiler.jar --shouldProvideRequireSoyNamespaces --isUsingIjData
+SOY_EXTRACTOR = java -jar third-party-downloads/SoyMsgExtractor.jar
 
 REQUIRED_BINS = svn unzip wget java python sed
 
@@ -17,64 +17,6 @@ REQUIRED_BINS = svn unzip wget java python sed
 ##############################
 
 all: deps languages
-
-index-en:
-	mkdir -p appengine/generated/en/
-	$(SOY_COMPILER) --outputPathFormat appengine/index/generated/en/soy.js --srcs appengine/index/template.soy
-	python build-app.py index en
-
-puzzle-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/puzzle/generated/en/soy.js --srcs appengine/puzzle/template.soy
-	python build-app.py puzzle en
-
-maze-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/maze/generated/en/soy.js --srcs appengine/maze/template.soy
-	python build-app.py maze en
-
-bird-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/bird/generated/en/soy.js --srcs appengine/bird/template.soy
-	python build-app.py bird en
-
-turtle-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/turtle/generated/en/soy.js --srcs appengine/turtle/template.soy
-	python build-app.py turtle en
-
-movie-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/movie/generated/en/soy.js --srcs appengine/movie/template.soy
-	python build-app.py movie en
-
-music-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/music/generated/en/soy.js --srcs appengine/music/template.soy
-	python build-app.py music en
-
-pond-docs-en:
-	mkdir -p appengine/pond/generated/en/
-	$(SOY_COMPILER) --outputPathFormat appengine/pond/docs/generated/en/soy.js --srcs appengine/pond/docs/template.soy
-	python build-app.py pond/docs en
-
-pond-tutor-en: pond-common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/pond/tutor/generated/en/soy.js --srcs appengine/pond/tutor/template.soy
-	python build-app.py pond/tutor en
-
-pond-duck-en: pond-common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/pond/duck/generated/en/soy.js --srcs appengine/pond/duck/template.soy
-	python build-app.py pond/duck en
-
-genetics-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/genetics/generated/en/soy.js --srcs appengine/genetics/template.soy
-	python build-app.py genetics en
-
-gallery-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/gallery/generated/en/soy.js --srcs appengine/gallery/template.soy
-	python build-app.py gallery en
-
-pond-common-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/pond/generated/en/soy.js --srcs appengine/pond/template.soy
-
-common-en:
-	$(SOY_COMPILER) --outputPathFormat appengine/generated/en/soy.js --srcs appengine/template.soy
-
-en: index-en puzzle-en maze-en bird-en turtle-en movie-en music-en pond-docs-en pond-tutor-en pond-duck-en genetics-en gallery-en
 
 index puzzle maze bird turtle movie music gallery: common
 	@echo "Generating JS from appengine/$@/template.soy"
@@ -116,6 +58,35 @@ common: soy-to-json
 	i18n/json_to_js.py --output_dir appengine/generated --template appengine/template.soy json/*.json;
 	@echo
 
+createDir:
+	@echo "Create dir";	
+	@for app in $(USER_APPS); do \
+		mkdir -p appengine/$$app; \
+	done
+
+copyTemplates:
+	@echo "Copy templates";	
+	mkdir -p appengine/templates; 
+	@for app in $(USER_APPS); do \
+		mkdir -p appengine/templates/$$app; \
+		cp ../blockly-games/appengine/$$app/template.soy appengine/templates/$$app;\
+	done
+	sudo cp ../blockly-games/appengine/template.soy appengine/templates;\
+	sudo cp ../blockly-games/appengine/pond/template.soy appengine/templates/pond/template.soy;\
+	mkdir -p appengine/templates/gallery;\
+	sudo cp ../blockly-games/appengine/gallery/template.soy appengine/templates/gallery/template.soy;\
+
+copyModule:
+	@echo "Copy module";
+	sudo cp -R ../blockly-games/i18n ../blockly-games/third-party ../blockly-games/externs .
+	sudo rm -rf appengine/third-party/
+	sudo cp -R ../blockly-games/appengine/third-party appengine
+	sudo cp -R ../blockly-games/appengine/common ../blockly-games/appengine/js appengine
+	cp -R ../blockly-games/appengine/pond/js/ appengine/pond
+	@for app in $(USER_APPS); do \
+		cp -R ../blockly-games/appengine/$$app/js/ appengine/$$app;\
+	done
+
 soy-to-json:
 	@echo "Converting Soy files to JSON for Translatewiki."
 	@# Create extracted_msgs.xlf with all messages from all soy files.
@@ -125,18 +96,18 @@ soy-to-json:
 	i18n/xliff_to_json.py --xlf extracted_msgs.xlf --templates $(ALL_TEMPLATES)
 	@echo
 
-languages: soy-to-json
+languages: createDir copyTemplates copyModule soy-to-json
 	@for app in $(ALL_JSON); do \
 	  echo "Generating JS from appengine/$$app/template.soy"; \
-	  mkdir -p /mnt/c/Users/viet1/Downloads/Programs/misBlocklyVietnamesePacks/appengine/$$app/generated; \
-	  /mnt/c/Users/viet1/Downloads/Programs/blockly-games/i18n/json_to_js.py --output_dir /mnt/c/Users/viet1/Downloads/Programs/misBlocklyVietnamesePacks/appengine/$$app/generated --template appengine/$$app/template.soy /mnt/c/Users/viet1/Downloads/Programs/misBlocklyVietnamesePacks/json/*.json; \
+	  mkdir -p appengine/$$app/generated; \
+	  i18n/json_to_js.py --output_dir appengine/$$app/generated --template appengine/templates/$$app/template.soy json/*.json; \
 	  echo; \
 	done
 	@for app in $(USER_APPS); do \
 	  python build-app.py $$app; \
 	done
 
-deps:
+deps: copyModule
 	$(foreach bin,$(REQUIRED_BINS),\
 	    $(if $(shell command -v $(bin) 2> /dev/null),$(info Found `$(bin)`),$(error Please install `$(bin)`)))
 	mkdir -p third-party-downloads
