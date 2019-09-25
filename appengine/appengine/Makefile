@@ -81,7 +81,7 @@ copyModule:
 	sudo cp -R ../blockly-games/i18n ../blockly-games/third-party ../blockly-games/externs .
 	sudo rm -rf appengine/third-party/
 	sudo cp -R ../blockly-games/appengine/third-party appengine
-	sudo cp -R ../blockly-games/appengine/common/1x1.gif ../blockly-games/appengine/common/back.js ../blockly-games/appengine/common/common.css ../blockly-games/appengine/common/debug.js ../blockly-games/appengine/common/help.png ../blockly-games/appengine/common/loading.gif ../blockly-games/appengine/common/prettify.css ../blockly-games/appengine/common/prettify.js ../blockly-games/appengine/common/storage.js ../blockly-games/appengine/common/stripes.gif ../blockly-games/appengine/js appengine
+	sudo cp -R ../blockly-games/appengine/common ../blockly-games/appengine/js appengine
 	cp -R ../blockly-games/appengine/pond/js/ appengine/pond
 	@for app in $(USER_APPS); do \
 		cp -R ../blockly-games/appengine/$$app/js/ appengine/$$app;\
