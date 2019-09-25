@@ -35,7 +35,7 @@ if (location.host == 'blockly-games.appspot.com') {
   appName = appName ? appName[1].replace('-', '/') : 'index';
 
   // Supported languages (consistent across all apps).
-  window['BlocklyGamesLanguages'] = ['vi'];
+  window['BlocklyGamesLanguages'] = ['en,vi'];
 
   // Use a series of heuristics that determine the likely language of this user.
   // First choice: The URL specified language.
