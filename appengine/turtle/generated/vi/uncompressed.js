@@ -1,4 +1,5 @@
 // Automatically generated file.  Do not edit!
+ // This version is modified by viet1pro, Komaz, baonamdao from MIS!
 
 
 window.CLOSURE_NO_DEPS = true;

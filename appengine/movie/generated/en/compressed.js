@@ -1,4 +1,5 @@
 // Automatically generated file.  Do not edit!
+ // This version is modified by viet1pro, Komaz, baonamdao from MIS!
 
 'use strict';var c;function aa(a,b,d){if(null==a)throw new TypeError("The 'this' value for String.prototype."+d+" must not be null or undefined");if(b instanceof RegExp)throw new TypeError("First argument to String.prototype."+d+" must not be a regular expression");return a+""}
 var ca="function"==typeof Object.defineProperties?Object.defineProperty:function(a,b,d){a!=Array.prototype&&a!=Object.prototype&&(a[b]=d.value)},ea="undefined"!=typeof window&&window===this?this:"undefined"!=typeof global&&null!=global?global:this;function fa(a,b){if(b){var d=ea;a=a.split(".");for(var e=0;e<a.length-1;e++){var f=a[e];f in d||(d[f]={});d=d[f]}a=a[a.length-1];e=d[a];b=b(e);b!=e&&null!=b&&ca(d,a,{configurable:!0,writable:!0,value:b})}}
