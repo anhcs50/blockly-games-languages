@@ -154,7 +154,6 @@ window.CLOSURE_NO_DEPS = true;
       "pond/generated/vi/soy.js",
       "pond/tutor/generated/vi/soy.js",
       "third-party/blockly/core/trashcan.js",
-      "third-party/blockly/core/zoom_controls.js",
       "third-party/blockly/core/components/tree/basenode.js",
       "third-party/blockly/core/components/tree/treenode.js",
       "third-party/blockly/core/components/tree/treecontrol.js",
