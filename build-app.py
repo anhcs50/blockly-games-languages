@@ -35,7 +35,7 @@ import sys
 import threading
 
 # Define a warning message for all the generated files.
-WARNING = '// Automatically generated file.  Do not edit!\n'
+WARNING = '// Automatically generated file.  Do not edit!\n // This version is modified by viet1pro, Komaz, baonamdao from MIS!\n'
 
 
 def main(name, lang):
