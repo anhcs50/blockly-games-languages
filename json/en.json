@@ -1,7 +1,11 @@
 {
 	"@metadata": {
 		"author": "Neil Fraser <fraser@google.com>",
+<<<<<<< HEAD
 		"lastupdated": "2019-10-05 08:41:42.145919",
+=======
+		"lastupdated": "2019-09-26 00:08:14.994923",
+>>>>>>> parent of 1be6b96... Update lang
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
