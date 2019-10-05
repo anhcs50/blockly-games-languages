@@ -76,10 +76,9 @@ copyTemplates:
 	mkdir -p appengine/templates/gallery;\
 	sudo cp ../blockly-games/appengine/gallery/template.soy appengine/templates/gallery/template.soy;\
 
-backupModifiedTemplates:
+copyModifiedTemplates:
 	@echo "Copy modified templates";
-	mkdir -p appengine/modifiedTemplates
-	cp -R appengine/templates/* appengine/modifiedTemplates
+	cp -R appengine/modifiedTemplates/* appengine/templates
 
 copyModule:
 	@echo "Copy module";
@@ -114,7 +113,7 @@ languages: createDir copyTemplates copyModule soy-to-json
 	  python build-app.py $$app; \
 	done
 
-modifiedLanguages: createDir backupModifiedTemplates copyModule soy-to-json
+modifiedLanguages: createDir copyModifiedTemplates copyModule soy-to-json
 	@for app in $(ALL_JSON); do \
 	  echo "Generating JS from appengine/$$app/template.soy"; \
 	  mkdir -p appengine/$$app/generated; \
