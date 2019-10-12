@@ -27,10 +27,13 @@ goog.provide('Movie');
 
 goog.require('Blockly.Comment');
 goog.require('Blockly.FieldColour');
+goog.require('Blockly.FlyoutButton');
 goog.require('Blockly.Toolbox');
 goog.require('Blockly.Trashcan');
 goog.require('Blockly.utils.Coordinate');
 goog.require('Blockly.utils.style');
+goog.require('Blockly.VerticalFlyout');
+goog.require('Blockly.ZoomControls');
 goog.require('BlocklyDialogs');
 goog.require('BlocklyGames');
 goog.require('BlocklyInterface');

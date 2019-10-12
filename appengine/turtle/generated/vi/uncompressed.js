@@ -7,6 +7,8 @@ window.CLOSURE_NO_DEPS = true;
 (function() {
   var srcs = [
       "third-party/base.js",
+      "third-party/blockly/core/utils/math.js",
+      "js/lib-games.js",
       "turtle/js/answers.js",
       "third-party/blockly/core/utils/global.js",
       "third-party/blockly/core/utils/useragent.js",
@@ -35,7 +37,6 @@ window.CLOSURE_NO_DEPS = true;
       "third-party/blockly/core/keyboard_nav/cursor.js",
       "third-party/blockly/core/theme.js",
       "third-party/blockly/core/theme/classic.js",
-      "third-party/blockly/core/utils/math.js",
       "third-party/blockly/core/keyboard_nav/marker_cursor.js",
       "third-party/blockly/core/variable_map.js",
       "third-party/blockly/core/workspace.js",
@@ -104,7 +105,6 @@ window.CLOSURE_NO_DEPS = true;
       "third-party/blockly/core/block_drag_surface.js",
       "third-party/blockly/core/inject.js",
       "third-party/blockly/core/blockly.js",
-      "js/lib-games.js",
       "third-party/blockly/core/utils/svg_paths.js",
       "third-party/blockly/core/renderers/common/constants.js",
       "third-party/blockly/core/renderers/measurables/types.js",
@@ -126,6 +126,7 @@ window.CLOSURE_NO_DEPS = true;
       "turtle/generated/vi/msg.js",
       "js/lib-interface.js",
       "js/lib-dialogs.js",
+      "third-party/blockly/core/zoom_controls.js",
       "js/slider.js",
       "third-party/blockly/generators/javascript.js",
       "third-party/blockly/generators/javascript/lists.js",
