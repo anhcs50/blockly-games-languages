@@ -167,8 +167,8 @@
 	"Turtle.helpToolbox": "Choose a category to see the blocks.",
 	"Movie.x": "x",
 	"Movie.y": "y",
-	"Movie.x1": "start x",
-	"Movie.y1": "start y",
+	"Movie.x1": " x",
+	"Movie.y1": " y",
 	"Movie.x2": "end x",
 	"Movie.y2": "end y",
 	"Movie.radius": "radius",
@@ -224,8 +224,8 @@
 	"Pond.helpText5": "This opponent is also too far away to use the cannon. But you are too weak to survive a collision. Swim towards the opponent while your horizontal location is less than than 50. Then 'stop' and use the cannon.",
 	"Pond.helpText6": "This opponent will move away when it is hit. Swim towards it if it is out of range (70 meters).",
 	"Pond.rabbitName": "Rabbit",
-	"Pond.counterName": "Counter",
-	"Pond.rookName": "Rook",
-	"Pond.sniperName": "Sniper",
+	"Pond.counterName": "Người tính toán",
+	"Pond.rookName": "Tân binh",
+	"Pond.sniperName": "Xạ thủ",
 	"Gallery": "Gallery"
 }
