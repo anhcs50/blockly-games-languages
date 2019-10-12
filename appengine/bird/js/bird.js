@@ -31,6 +31,7 @@ goog.require('Blockly.Trashcan');
 goog.require('Blockly.utils.Coordinate');
 goog.require('Blockly.utils.math');
 goog.require('Blockly.utils.style');
+goog.require('Blockly.VerticalFlyout');
 goog.require('BlocklyDialogs');
 goog.require('BlocklyGames');
 goog.require('BlocklyInterface');
@@ -43,7 +44,7 @@ BlocklyGames.NAME = 'bird';
  */
 Bird.stepSpeed;
 
-Bird.BIRD_ICON_SIZE = 120;
+Bird.BIRD_ICON_SIZE = 240;
 Bird.NEST_ICON_SIZE = 100;
 Bird.WORM_ICON_SIZE = 100;
 Bird.MAP_SIZE = 400;
