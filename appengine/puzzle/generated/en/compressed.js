@@ -451,7 +451,23 @@ g.La=function(a){for(;a.length;){var b=a.pop();b[0].removeEventListener(b[1],b[2
 g.Mt=function(){g.Ub("LOGIC_HUE",["Blocks","logic","HUE"],void 0);g.Ub("LOGIC_HUE",["Constants","Logic","HUE"],210);g.Ub("LOOPS_HUE",["Blocks","loops","HUE"],void 0);g.Ub("LOOPS_HUE",["Constants","Loops","HUE"],120);g.Ub("MATH_HUE",["Blocks","math","HUE"],void 0);g.Ub("MATH_HUE",["Constants","Math","HUE"],230);g.Ub("TEXTS_HUE",["Blocks","texts","HUE"],void 0);g.Ub("TEXTS_HUE",["Constants","Text","HUE"],160);g.Ub("LISTS_HUE",["Blocks","lists","HUE"],void 0);g.Ub("LISTS_HUE",["Constants","Lists","HUE"],
 260);g.Ub("COLOUR_HUE",["Blocks","colour","HUE"],void 0);g.Ub("COLOUR_HUE",["Constants","Colour","HUE"],20);g.Ub("VARIABLES_HUE",["Blocks","variables","HUE"],void 0);g.Ub("VARIABLES_HUE",["Constants","Variables","HUE"],330);g.Ub("VARIABLES_DYNAMIC_HUE",["Constants","VariablesDynamic","HUE"],310);g.Ub("PROCEDURES_HUE",["Blocks","procedures","HUE"],void 0)};
 g.Ub=function(a,b,d){for(var e="Blockly",f=g,h=0;h<b.length;++h)e+="."+b[h],f&&(f=f[b[h]]);f&&f!==d&&(a=(void 0===d?'%1 has been removed. Use Blockly.Msg["%2"].':'%1 is deprecated and unused. Override Blockly.Msg["%2"].').replace("%1",e).replace("%2",a),console.warn(a))};g.Gr=function(a){g.Pr=a;(a=g.$())&&g.Yv(a)};g.Yv=function(a){g.Vr(N(a).filter(function(d){return void 0!==d.Un}));!a.ba&&a.K&&a.K.o?g.Vr(N(a.K.o)):Ne(a);a.ba&&a.ba.ty();var b=new A(null,"theme");b.yb=a.id;g.i.ga(b)};
-g.Vr=function(a){for(var b=0,d;d=a[b];b++){var e=d.Un;cd(d,e);d.Ad&&d.Ad.sy(e)}};g.fq=function(){return g.Pr};var jf={ar:"\u0627\u0644\u0639\u0631\u0628\u064a\u0629",be:"\u0431\u0435\u043b\u0430\u0440\u0443\u0441\u043a\u0456","be-tarask":"Tara\u0161kievica",bg:"\u0431\u044a\u043b\u0433\u0430\u0440\u0441\u043a\u0438 \u0435\u0437\u0438\u043a",bn:"\u09ac\u09be\u0982\u09b2\u09be",br:"Brezhoneg",cs:"\u010cesky",da:"Dansk",de:"Deutsch",el:"\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac",en:"English",es:"Espa\u00f1ol",eu:"Euskara",fa:"\u0641\u0627\u0631\u0633\u06cc",fi:"Suomi",fr:"Fran\u00e7ais",gl:"Galego",ha:"Hausa",
+g.Vr=function(a){for(var b=0,d;d=a[b];b++){var e=d.Un;cd(d,e);d.Ad&&d.Ad.sy(e)}};g.fq=function(){return g.Pr};/*
+
+ Copyright 2013 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+*/
+var jf={ar:"\u0627\u0644\u0639\u0631\u0628\u064a\u0629",be:"\u0431\u0435\u043b\u0430\u0440\u0443\u0441\u043a\u0456","be-tarask":"Tara\u0161kievica",bg:"\u0431\u044a\u043b\u0433\u0430\u0440\u0441\u043a\u0438 \u0435\u0437\u0438\u043a",bn:"\u09ac\u09be\u0982\u09b2\u09be",br:"Brezhoneg",cs:"\u010cesky",da:"Dansk",de:"Deutsch",el:"\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac",en:"English",es:"Espa\u00f1ol",eu:"Euskara",fa:"\u0641\u0627\u0631\u0633\u06cc",fi:"Suomi",fr:"Fran\u00e7ais",gl:"Galego",ha:"Hausa",
 he:"\u05e2\u05d1\u05e8\u05d9\u05ea",hi:"\u0939\u093f\u0928\u094d\u0926\u0940",hu:"Magyar",hy:"\u0570\u0561\u0575\u0565\u0580\u0567\u0576",ia:"Interlingua",id:"Bahasa Indonesia",ig:"As\u1ee5s\u1ee5 Igbo",is:"\u00cdslenska",it:"Italiano",ja:"\u65e5\u672c\u8a9e",kab:"Taqbaylit",ko:"\ud55c\uad6d\uc5b4",lt:"Lietuvi\u0173",lv:"Latvie\u0161u",ms:"Bahasa Melayu",my:"\u1019\u103c\u1014\u103a\u1019\u102c\u1005\u102c",nb:"Norsk Bokm\u00e5l",nl:"Nederlands, Vlaams",pl:"Polski",pms:"Piemont\u00e8is",pt:"Portugu\u00eas",
 "pt-br":"Portugu\u00eas Brasileiro",ro:"Rom\u00e2n\u0103",ru:"\u0420\u0443\u0441\u0441\u043a\u0438\u0439",sc:"Sardu",sk:"Sloven\u010dina",sl:"Sloven\u0161\u010dina",sq:"Shqip",sr:"\u0421\u0440\u043f\u0441\u043a\u0438",sv:"Svenska",th:"\u0e20\u0e32\u0e29\u0e32\u0e44\u0e17\u0e22",tr:"T\u00fcrk\u00e7e",uk:"\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430",ur:"\u0627\u064f\u0631\u062f\u064f\u0648\u202c",vi:"Ti\u1ebfng Vi\u1ec7t",yo:"\u00c8d\u00e8 Yor\u00f9b\u00e1","zh-hans":"\u7b80\u4f53\u4e2d\u6587",
 "zh-hant":"\u6b63\u9ad4\u4e2d\u6587"},kf="ace ar fa he mzn ps ur".split(" "),lf=window.BlocklyGamesLang,mf=window.BlocklyGamesLanguages,nf=".html"==window.location.pathname.substr(-5),F=null;function of(){return-1!=kf.indexOf(lf)}var pf,qf=Number,rf,sf=window.location.search.match(/[?&]level=([^&]+)/);rf=sf?decodeURIComponent(sf[1].replace(/\+/g,"%20")):"NaN";var tf=qf(rf);pf=isNaN(tf)?1:g.g.kc.Ll(1,tf,10);

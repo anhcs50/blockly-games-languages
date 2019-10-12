@@ -1,8 +1,6 @@
 /**
- * Blockly Games: Bird
- *
- * Copyright 2013 Google Inc.
- * https://github.com/google/blockly-games
+ * @license
+ * Copyright 2013 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +42,7 @@ BlocklyGames.NAME = 'bird';
  */
 Bird.stepSpeed;
 
-Bird.BIRD_ICON_SIZE = 240;
+Bird.BIRD_ICON_SIZE = 120;
 Bird.NEST_ICON_SIZE = 100;
 Bird.WORM_ICON_SIZE = 100;
 Bird.MAP_SIZE = 400;
