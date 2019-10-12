@@ -1,7 +1,39 @@
 // Automatically generated file.  Do not edit!
  // This version is modified by viet1pro, Komaz, baonamdao from MIS!
 
-'use strict';var e=Number,f,g=window.location.search.match(/[?&]level=([^&]+)/);f=g?decodeURIComponent(g[1].replace(/\+/g,"%20")):"NaN";e(f);if(!h){var h,k="";"undefined"!==typeof navigator&&navigator&&"string"==typeof navigator.userAgent&&(k=navigator.userAgent);var l=0==k.indexOf("Opera");h={l:{g:"ScriptEngine"in window},i:l,h:!l&&-1!=k.indexOf("MSIE"),j:!l&&-1!=k.indexOf("WebKit")}}if(!m)var m={};if(!n)var n={};if(!p)var p={};if(!q)var q={};if(!r)var r={};if(!t)var t={};function u(b){b=b.currentTarget;var a=document.getElementById(b.id+"-content"),c="zippy-content-expanded"==a.className;b.className="zippy-header-"+(c?"collapsed":"expanded");a.className="zippy-content-"+(c?"collapsed":"expanded");a.style.maxHeight=c?0:a.scrollHeight+"px"}
+'use strict';/*
+
+ Copyright 2013 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+*/
+var e=Number,f,g=window.location.search.match(/[?&]level=([^&]+)/);f=g?decodeURIComponent(g[1].replace(/\+/g,"%20")):"NaN";e(f);if(!h){var h,k="";"undefined"!==typeof navigator&&navigator&&"string"==typeof navigator.userAgent&&(k=navigator.userAgent);var l=0==k.indexOf("Opera");h={l:{g:"ScriptEngine"in window},i:l,h:!l&&-1!=k.indexOf("MSIE"),j:!l&&-1!=k.indexOf("WebKit")}}if(!m)var m={};if(!n)var n={};if(!p)var p={};if(!q)var q={};if(!r)var r={};if(!t)var t={};/*
+
+ Copyright 2014 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+*/
+function u(b){b=b.currentTarget;var a=document.getElementById(b.id+"-content"),c="zippy-content-expanded"==a.className;b.className="zippy-header-"+(c?"collapsed":"expanded");a.className="zippy-content-"+(c?"collapsed":"expanded");a.style.maxHeight=c?0:a.scrollHeight+"px"}
 window.addEventListener("load",function(){var b=window.location.search.match(/[?&]mode=([^&]+)/);b=b?Number(b[1]):Infinity;var a=b%2?"blocks":"js";document.body.innerHTML='<h1>Pond Documentation</h1><h2 id="pond">Pond</h2><div id="pond-content"><h3>Angles</h3><p>The compass is oriented so that due east (right) is 0 degrees, 90 is north, 180 is west, 270 is south. Angles wrap as expected: -90 is south, 450 is north.</p><p><img src="docs/compass.png" height="145" width="150" style="padding: 0 2em;"></p><h3>Cannon</h3>'+("blocks"==
 a?'<p><svg height="41" width="250"><g class="blocklyDraggable"><path class="blocklyPathDark" transform="translate(1,1)" fill="#7a4984" d="m 0,8 A 8,8 0 0,1 8,0 H 15 l 6,4 3,0 6,-4 H 40 H 222.36071014404297 v 36 H 29.5 l -6,4 -3,0 -6,-4 H 8 a 8,8 0 0,1 -8,-8 z M 125.01641845703125,5 h -36.020530700683594 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 7 h 36.020530700683594 z M 193.4027557373047,5 h -38.31193542480469 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 7 h 38.31193542480469 z"></path><path class="blocklyPath" fill="#995ba5" d="m 0,8 A 8,8 0 0,1 8,0 H 15 l 6,4 3,0 6,-4 H 40 H 222.36071014404297 v 36 H 29.5 l -6,4 -3,0 -6,-4 H 8 a 8,8 0 0,1 -8,-8 z M 125.01641845703125,5 h -36.020530700683594 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 7 h 36.020530700683594 z M 193.4027557373047,5 h -38.31193542480469 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 7 h 38.31193542480469 z"></path><path class="blocklyPathLight" stroke="#b88cc0" d="m 0.5,7.5 A 7.5,7.5 0 0,1 8,0.5 H 15 l 6,4 3,0 6,-4 H 39.5 M 39.5,0.5 H 221.86071014404297 M 2.6966991411008934,33.30330085889911 A 7.5,7.5 0 0,1 0.5,28 V 8 M 125.51641845703125,5.5 v 27 h -36.020530700683594 M 83.89588775634766,24.3 l 3.68,-2.1 M 193.9027557373047,5.5 v 27 h -38.31193542480469 M 149.9908203125,24.3 l 3.68,-2.1"></path><text class="blocklyText" y="12.5" transform="translate(10,10)">cannon</text><text class="blocklyText" y="12.5" transform="translate(68.11233520507812,10)">(</text><text class="blocklyText" y="12.5" transform="translate(135.01641845703125,10)">,</text><text class="blocklyText" y="12.5" transform="translate(203.4027557373047,10)">);</text><g class="blocklyDraggable" transform="translate(89.99588775634766,6)"><path class="blocklyPathDark" transform="translate(1,1)" fill="#495284" d="m 0,0 H 34.020530700683594 v 25 H 0 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z"></path><path class="blocklyPath" fill="#5b67a5" d="m 0,0 H 34.020530700683594 v 25 H 0 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z"></path><path class="blocklyPathLight" stroke="#8c95c0" d="m 0.5,0.5 H 33.520530700683594 M 33.520530700683594,0.5 M 0.5,24.5 V 18.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 H 1"></path><g class="blocklyEditableText" transform="translate(10,5)" style="cursor: text;"><rect rx="4" ry="4" x="-5" y="0" height="16" width="24.020530700683594"></rect><text class="blocklyText" y="12.5">0<tspan>\u00b0</tspan></text></g></g><g class="blocklyDraggable" transform="translate(156.0908203125,6)"><path class="blocklyPathDark" transform="translate(1,1)" fill="#495284" d="m 0,0 H 36.31193542480469 v 25 H 0 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z"></path><path class="blocklyPath" fill="#5b67a5" d="m 0,0 H 36.31193542480469 v 25 H 0 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z"></path><path class="blocklyPathLight" stroke="#8c95c0" d="m 0.5,0.5 H 35.81193542480469 M 35.81193542480469,0.5 M 0.5,24.5 V 18.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 H 1"></path><g class="blocklyEditableText" transform="translate(10,5)" style="cursor: text;"><rect rx="4" ry="4" x="-5" y="0" height="16" width="26.311935424804688"></rect><text class="blocklyText" y="12.5">70</text></g></g></g></svg></p>':
 "js"==a?'<pre class="pondSpec spec">cannon(<i>angle</i>, <i>range</i>)</pre>':"")+"<p>The <code>cannon()</code> function fires a cannonball towards the specified angle and range.  The angle is independent of the direction of the duck. The range can be 0-70 metres, with greater ranges truncated to 70.</p><p>The cannon takes about one second to reload after firing. If <code>cannon()</code> is called during this time, nothing happens."+("js"==a?" <code>cannon()</code> returns <code>true</code> if a cannonball was fired, or <code>false</code> if the cannon is reloading.":

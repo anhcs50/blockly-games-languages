@@ -528,7 +528,23 @@ g.Aa=function(a){for(;a.length;){var b=a.pop();b[0].removeEventListener(b[1],b[2
 g.mz=function(){g.Lc("LOGIC_HUE",["Blocks","logic","HUE"],void 0);g.Lc("LOGIC_HUE",["Constants","Logic","HUE"],210);g.Lc("LOOPS_HUE",["Blocks","loops","HUE"],void 0);g.Lc("LOOPS_HUE",["Constants","Loops","HUE"],120);g.Lc("MATH_HUE",["Blocks","math","HUE"],void 0);g.Lc("MATH_HUE",["Constants","Math","HUE"],230);g.Lc("TEXTS_HUE",["Blocks","texts","HUE"],void 0);g.Lc("TEXTS_HUE",["Constants","Text","HUE"],160);g.Lc("LISTS_HUE",["Blocks","lists","HUE"],void 0);g.Lc("LISTS_HUE",["Constants","Lists","HUE"],
 260);g.Lc("COLOUR_HUE",["Blocks","colour","HUE"],void 0);g.Lc("COLOUR_HUE",["Constants","Colour","HUE"],20);g.Lc("VARIABLES_HUE",["Blocks","variables","HUE"],void 0);g.Lc("VARIABLES_HUE",["Constants","Variables","HUE"],330);g.Lc("VARIABLES_DYNAMIC_HUE",["Constants","VariablesDynamic","HUE"],310);g.Lc("PROCEDURES_HUE",["Blocks","procedures","HUE"],void 0)};
 g.Lc=function(a,b,d){for(var e="Blockly",f=g,h=0;h<b.length;++h)e+="."+b[h],f&&(f=f[b[h]]);f&&f!==d&&(a=(void 0===d?'%1 has been removed. Use Blockly.Msg["%2"].':'%1 is deprecated and unused. Override Blockly.Msg["%2"].').replace("%1",e).replace("%2",a),console.warn(a))};g.vw=function(a){g.Fw=a;(a=g.ra())&&g.bC(a)};g.bC=function(a){g.Nw(u(a).filter(function(d){return void 0!==d.Nl}));!a.ea&&a.K&&a.K.o?g.Nw(u(a.K.o)):ff(a);a.ea&&dg(a.ea);var b=new t(null,"theme");b.dc=a.id;g.j.ka(b)};
-g.Nw=function(a){for(var b=0,d;d=a[b];b++)if(J(d,d.Nl),d.Pc){var e=d.Pc.o;if(e&&u(e)){var f=u(e);for(d=0;d<f.length;d++){var h=f[d];J(h,h.Nl)}e=u(e.K.o);for(d=0;d<e.length;d++)h=e[d],J(h,h.Nl)}}};g.jn=function(){return g.Fw};var Jg={ar:"\u0627\u0644\u0639\u0631\u0628\u064a\u0629",be:"\u0431\u0435\u043b\u0430\u0440\u0443\u0441\u043a\u0456","be-tarask":"Tara\u0161kievica",bg:"\u0431\u044a\u043b\u0433\u0430\u0440\u0441\u043a\u0438 \u0435\u0437\u0438\u043a",bn:"\u09ac\u09be\u0982\u09b2\u09be",br:"Brezhoneg",cs:"\u010cesky",da:"Dansk",de:"Deutsch",el:"\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac",en:"English",es:"Espa\u00f1ol",eu:"Euskara",fa:"\u0641\u0627\u0631\u0633\u06cc",fi:"Suomi",fr:"Fran\u00e7ais",gl:"Galego",ha:"Hausa",
+g.Nw=function(a){for(var b=0,d;d=a[b];b++)if(J(d,d.Nl),d.Pc){var e=d.Pc.o;if(e&&u(e)){var f=u(e);for(d=0;d<f.length;d++){var h=f[d];J(h,h.Nl)}e=u(e.K.o);for(d=0;d<e.length;d++)h=e[d],J(h,h.Nl)}}};g.jn=function(){return g.Fw};/*
+
+ Copyright 2013 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+*/
+var Jg={ar:"\u0627\u0644\u0639\u0631\u0628\u064a\u0629",be:"\u0431\u0435\u043b\u0430\u0440\u0443\u0441\u043a\u0456","be-tarask":"Tara\u0161kievica",bg:"\u0431\u044a\u043b\u0433\u0430\u0440\u0441\u043a\u0438 \u0435\u0437\u0438\u043a",bn:"\u09ac\u09be\u0982\u09b2\u09be",br:"Brezhoneg",cs:"\u010cesky",da:"Dansk",de:"Deutsch",el:"\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac",en:"English",es:"Espa\u00f1ol",eu:"Euskara",fa:"\u0641\u0627\u0631\u0633\u06cc",fi:"Suomi",fr:"Fran\u00e7ais",gl:"Galego",ha:"Hausa",
 he:"\u05e2\u05d1\u05e8\u05d9\u05ea",hi:"\u0939\u093f\u0928\u094d\u0926\u0940",hu:"Magyar",hy:"\u0570\u0561\u0575\u0565\u0580\u0567\u0576",ia:"Interlingua",id:"Bahasa Indonesia",ig:"As\u1ee5s\u1ee5 Igbo",is:"\u00cdslenska",it:"Italiano",ja:"\u65e5\u672c\u8a9e",kab:"Taqbaylit",ko:"\ud55c\uad6d\uc5b4",lt:"Lietuvi\u0173",lv:"Latvie\u0161u",ms:"Bahasa Melayu",my:"\u1019\u103c\u1014\u103a\u1019\u102c\u1005\u102c",nb:"Norsk Bokm\u00e5l",nl:"Nederlands, Vlaams",pl:"Polski",pms:"Piemont\u00e8is",pt:"Portugu\u00eas",
 "pt-br":"Portugu\u00eas Brasileiro",ro:"Rom\u00e2n\u0103",ru:"\u0420\u0443\u0441\u0441\u043a\u0438\u0439",sc:"Sardu",sk:"Sloven\u010dina",sl:"Sloven\u0161\u010dina",sq:"Shqip",sr:"\u0421\u0440\u043f\u0441\u043a\u0438",sv:"Svenska",th:"\u0e20\u0e32\u0e29\u0e32\u0e44\u0e17\u0e22",tr:"T\u00fcrk\u00e7e",uk:"\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430",ur:"\u0627\u064f\u0631\u062f\u064f\u0648\u202c",vi:"Ti\u1ebfng Vi\u1ec7t",yo:"\u00c8d\u00e8 Yor\u00f9b\u00e1","zh-hans":"\u7b80\u4f53\u4e2d\u6587",
 "zh-hant":"\u6b63\u9ad4\u4e2d\u6587"},Kg="ace ar fa he mzn ps ur".split(" "),Lg=window.BlocklyGamesLang,Mg=window.BlocklyGamesLanguages,Ng=".html"==window.location.pathname.substr(-5),D=null,P,Og=Number,Pg,Qg=window.location.search.match(/[?&]level=([^&]+)/);Pg=Qg?decodeURIComponent(Qg[1].replace(/\+/g,"%20")):"NaN";var Rg=Og(Pg);P=isNaN(Rg)?1:g.g.Fc.Si(1,Rg,10);
@@ -652,7 +668,23 @@ S.Zp,!0);S.gs.fC=!0}b=document.getElementById("submitButton");S.ji(a,b,!0,!0,{wi
 S.vd,!0);b.addEventListener("touchend",S.vd,!0);b=document.getElementById("doneOk");b.addEventListener("click",T.$q,!0);b.addEventListener("touchend",T.$q,!0);S.ji(a,null,!1,!0,{width:"40%",left:"30%",top:"3em"},function(){document.body.removeEventListener("keydown",S.Nt,!0)});document.body.addEventListener("keydown",S.Nt,!0);document.getElementById("dialogDoneText").textContent=d},du:function(a){!S.Fg||13!=a.keyCode&&27!=a.keyCode&&32!=a.keyCode||(S.vd(!0),a.stopPropagation(),a.preventDefault())},
 js:function(){document.body.addEventListener("keydown",S.du,!0)},ls:function(){document.body.removeEventListener("keydown",S.du,!0)},Nt:function(a){if(13==a.keyCode||27==a.keyCode||32==a.keyCode)S.vd(!0),a.stopPropagation(),a.preventDefault(),27!=a.keyCode&&T.$q()},qt:function(a){if(13==a.keyCode||27==a.keyCode||32==a.keyCode)S.vd(!0),a.stopPropagation(),a.preventDefault(),27!=a.keyCode&&T.nn()},Eu:function(a){27==a.keyCode?S.vd(!0):13==a.keyCode&&S.Zp()},Zp:function(){var a=document.getElementById("galleryTitle");
 if(a.value.trim()){a=document.getElementById("galleryForm");for(var b=[],d=0,e;e=a.elements[d];d++)e.name&&(b[d]=encodeURIComponent(e.name)+"="+encodeURIComponent(e.value));var f=new XMLHttpRequest;f.open("POST",a.action);f.setRequestHeader("Content-type","application/x-www-form-urlencoded");f.onload=function(){if(4==f.readyState){var h=200==f.status?Q("Games_submitted"):Q("Games_httpRequestError")+"\nStatus: "+f.status;S.Cw(null,h)}};f.send(b.join("&"));S.vd(!0)}else a.value="",a.focus()}};
-window.BlocklyDialogs=S;S.hideDialog=S.vd;function Oh(a){this.Xx=23;this.Ei=18;this.xo=132;this.mh=20;this.Ka=.5;this.Dt=void 0;this.$o=[];var b=g.g.m.Xj,d=document.createElementNS(b,"line");d.setAttribute("class","sliderTrack");d.setAttribute("x1",10);d.setAttribute("y1",35);d.setAttribute("x2",140);d.setAttribute("y2",35);a.appendChild(d);d=document.createElementNS(b,"rect");d.setAttribute("style","opacity: 0");d.setAttribute("x",10-this.mh);d.setAttribute("y",35-this.mh);d.setAttribute("width",130+2*this.mh);d.setAttribute("height",2*
+window.BlocklyDialogs=S;S.hideDialog=S.vd;/*
+
+ Copyright 2012 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+*/
+function Oh(a){this.Xx=23;this.Ei=18;this.xo=132;this.mh=20;this.Ka=.5;this.Dt=void 0;this.$o=[];var b=g.g.m.Xj,d=document.createElementNS(b,"line");d.setAttribute("class","sliderTrack");d.setAttribute("x1",10);d.setAttribute("y1",35);d.setAttribute("x2",140);d.setAttribute("y2",35);a.appendChild(d);d=document.createElementNS(b,"rect");d.setAttribute("style","opacity: 0");d.setAttribute("x",10-this.mh);d.setAttribute("y",35-this.mh);d.setAttribute("width",130+2*this.mh);d.setAttribute("height",2*
 this.mh);d.setAttribute("rx",this.mh);d.setAttribute("ry",this.mh);a.appendChild(d);this.CC=d;d=document.createElementNS(b,"path");d.setAttribute("class","sliderKnob");d.setAttribute("d","m 0,0 l -8,8 v 12 h 16 v -12 z");a.appendChild(d);this.yv=d;b=document.createElementNS(b,"circle");b.setAttribute("style","opacity: 0");b.setAttribute("r",this.mh);b.setAttribute("cy",35);a.appendChild(b);this.Hq=b;for(this.setValue(.5);a&&"svg"!=a.nodeName.toLowerCase();)a=a.parentNode;this.Na=a;Ph(this.Hq,"mousedown",
 this,this.xv);Ph(this.Hq,"touchstart",this,this.xv);Ph(this.CC,"mousedown",this,this.aC);Ph(this.Na,"mouseup",null,Qh);Ph(this.Na,"touchend",null,Qh);Ph(this.Na,"mousemove",null,Rh);Ph(this.Na,"touchmove",null,Rh);Ph(document,"mouseover",null,Sh)}var Th=null,Uh=0,Vh=0;Oh.prototype.xv=function(a){if("touchstart"==a.type){if(1!=a.changedTouches.length)return;Wh(a)}Th=this;Uh=Xh(this,a).x;Vh=0;var b=this.yv.getAttribute("transform");b&&(b=b.match(/translate\(\s*([-\d.]+)/))&&(Vh=Number(b[1]));a.preventDefault()};
 function Qh(){Th=null}function Sh(a){if(Th){a=a.target;do if(a==Th.Na)return;while(a=a.parentNode);Th=null}}function Rh(a){var b=Th;if(b){if("touchmove"==a.type){if(1!=a.changedTouches.length)return;Wh(a)}a=Xh(b,a).x-Uh+Vh;b.setValue((a-b.Ei)/(b.xo-b.Ei))}}Oh.prototype.aC=function(a){if("touchstart"==a.type){if(1!=a.changedTouches.length)return;Wh(a)}a=Xh(this,a).x;Yh(this,(a-this.Ei)/(this.xo-this.Ei))};Oh.prototype.getValue=function(){return this.Ka};

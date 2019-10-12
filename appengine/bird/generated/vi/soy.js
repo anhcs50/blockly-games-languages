@@ -13,7 +13,7 @@ goog.require('BlocklyGames.soy');
 
 
 Bird.soy.messages = function(opt_data, opt_ignored, opt_ijData) {
-  return BlocklyGames.soy.messages(null, null, opt_ijData) + '<div style="display: none"><span id="Bird_noWorm">does not have worm</span><span id="Bird_heading">heading</span><span id="Bird_noWormTooltip">The condition when the bird has not gotten the \\nworm. </span><span id="Bird_headingTooltip">Move in the direction of the given angle: 0 is \\nto the right, 90 is straight up, etc. </span><span id="Bird_positionTooltip">x and y mark the bird\'s position. \\nWhen x = 0 the bird is near the left \\nedge, when x = 100 it\'s near the \\nright edge. When y = 0 the bird is \\nat the bottom, when y = 100 it\'s at \\nthe top. </span></div>';
+  return BlocklyGames.soy.messages(null, null, opt_ijData) + '<div style="display: none"><span id="Bird_noWorm">kh\u00F4ng c\u00F3 s\u00E2u</span><span id="Bird_heading">m\u1EE5c ti\u00EAu</span><span id="Bird_noWormTooltip">T\u00ECnh tr\u1EA1ng khi ch\u01B0a c\u00F3 s\u00E2u.</span><span id="Bird_headingTooltip">Move in the direction of the given angle: 0 is \\nto the right, 90 is straight up, etc. </span><span id="Bird_positionTooltip">x and y mark the bird\'s position. \\nWhen x = 0 the bird is near the left \\nedge, when x = 100 it\'s near the \\nright edge. When y = 0 the bird is \\nat the bottom, when y = 100 it\'s at \\nthe top. </span></div>';
 };
 if (goog.DEBUG) {
   Bird.soy.messages.soyTemplateName = 'Bird.soy.messages';
