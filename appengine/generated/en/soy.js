@@ -20,7 +20,7 @@ if (goog.DEBUG) {
 
 
 BlocklyGames.soy.titleSpan = function(opt_data, opt_ignored, opt_ijData) {
-  return '<span id="title">' + ((opt_ijData.html) ? '<a href="index.html?lang=' + soy.$$escapeHtml(opt_ijData.lang) + '">' : '<a href="./?lang=' + soy.$$escapeHtml(opt_ijData.lang) + '">') + 'Blockly Games</a> : ' + soy.$$escapeHtml(opt_data.appName) + '</span>';
+  return '<span id="title">' + ((opt_ijData.html) ? '<a href="index.html">' : '<a href="./">') + 'Blockly Games</a> : ' + soy.$$escapeHtml(opt_data.appName) + '</span>';
 };
 if (goog.DEBUG) {
   BlocklyGames.soy.titleSpan.soyTemplateName = 'BlocklyGames.soy.titleSpan';
@@ -29,9 +29,9 @@ if (goog.DEBUG) {
 
 BlocklyGames.soy.levelLinks = function(opt_data, opt_ignored, opt_ijData) {
   var output = ' &nbsp; ';
-  var iLimit183 = opt_data.maxLevel + 1;
-  for (var i183 = 1; i183 < iLimit183; i183++) {
-    output += ' ' + ((i183 == opt_data.level) ? '<span class="level_number level_done" id="level' + soy.$$escapeHtml(i183) + '">' + soy.$$escapeHtml(i183) + '</span>' : (i183 == opt_data.maxLevel) ? '<a class="level_number" id="level' + soy.$$escapeHtml(i183) + '" href="?lang=' + soy.$$escapeHtml(opt_data.lang) + '&level=' + soy.$$escapeHtml(i183) + soy.$$escapeHtml(opt_data.suffix) + '">' + soy.$$escapeHtml(i183) + '</a>' : '<a class="level_dot" id="level' + soy.$$escapeHtml(i183) + '" href="?lang=' + soy.$$escapeHtml(opt_data.lang) + '&level=' + soy.$$escapeHtml(i183) + soy.$$escapeHtml(opt_data.suffix) + '"></a>');
+  var iLimit179 = opt_data.maxLevel + 1;
+  for (var i179 = 1; i179 < iLimit179; i179++) {
+    output += ' ' + ((i179 == opt_data.level) ? '<span class="level_number level_done" id="level' + soy.$$escapeHtml(i179) + '">' + soy.$$escapeHtml(i179) + '</span>' : (i179 == opt_data.maxLevel) ? '<a class="level_number" id="level' + soy.$$escapeHtml(i179) + '" href="?lang=' + soy.$$escapeHtml(opt_data.lang) + '&level=' + soy.$$escapeHtml(i179) + soy.$$escapeHtml(opt_data.suffix) + '">' + soy.$$escapeHtml(i179) + '</a>' : '<a class="level_dot" id="level' + soy.$$escapeHtml(i179) + '" href="?lang=' + soy.$$escapeHtml(opt_data.lang) + '&level=' + soy.$$escapeHtml(i179) + soy.$$escapeHtml(opt_data.suffix) + '"></a>');
   }
   return output;
 };
