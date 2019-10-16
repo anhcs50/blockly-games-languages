@@ -124,7 +124,7 @@ modifiedLanguages: createDir copyModifiedTemplates copyModule soy-to-json
 	  python build-app.py $$app; \
 	done
 
-deps: copyModule
+deps:
 	$(foreach bin,$(REQUIRED_BINS),\
 	    $(if $(shell command -v $(bin) 2> /dev/null),$(info Found `$(bin)`),$(error Please install `$(bin)`)))
 	mkdir -p third-party-downloads
