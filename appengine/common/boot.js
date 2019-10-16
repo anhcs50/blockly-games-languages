@@ -23,10 +23,16 @@
  */
 'use strict';
 
-// Redirect to new domain.
-if (location.host == 'blockly-games.appspot.com') {
-  location.replace('https://blockly.games' +
-      location.pathname + location.search + location.hash);
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+function delCookie(cname) {
+    var expires = "expires=" + 'Thu, 01 Jan 1970 00:00:00 UTC';
+    document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    console.log(cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;");
 }
 
 (function() {
@@ -43,8 +49,10 @@ if (location.host == 'blockly-games.appspot.com') {
   var lang = param ? param[1].replace(/\+/g, '%20') : null;
   if (window['BlocklyGamesLanguages'].indexOf(lang) != -1) {
     // Save this explicit choice as cookie.
-    var exp = (new Date(Date.now() + 2 * 31536000000)).toUTCString();
-    document.cookie = 'lang=' + escape(lang) + '; expires=' + exp + 'path=/';
+    delCookie('lang');
+    setCookie('lang', escape(lang), 365);
+    // var exp = (new Date(Date.now() + 2 * 31536000000)).toUTCString();
+    // document.cookie = 'lang=' + escape(lang) + '; expires=' + exp + 'path=/';
   } else {
     // Second choice: Language cookie.
     var cookie = document.cookie.match(/(^|;)\s*lang=([\w\-]+)/);
