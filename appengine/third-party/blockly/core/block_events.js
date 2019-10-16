@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2018 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2018 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +39,6 @@ goog.require('Blockly.Events.Abstract');
 goog.require('Blockly.utils.Coordinate');
 goog.require('Blockly.utils.object');
 goog.require('Blockly.utils.xml');
-// TODO: Fix recursive dependency.
-// goog.require('Blockly.Xml');
 
 
 /**
@@ -177,16 +178,16 @@ Blockly.Events.Change.prototype.run = function(forward) {
       }
       break;
     case 'comment':
-      block.setCommentText(/** @type {string} */ (value) || null);
+      block.setCommentText(value || null);
       break;
     case 'collapsed':
-      block.setCollapsed(!!value);
+      block.setCollapsed(value);
       break;
     case 'disabled':
       block.setEnabled(!value);
       break;
     case 'inline':
-      block.setInputsInline(!!value);
+      block.setInputsInline(value);
       break;
     case 'mutation':
       var oldMutation = '';
@@ -195,7 +196,7 @@ Blockly.Events.Change.prototype.run = function(forward) {
         oldMutation = oldMutationDom && Blockly.Xml.domToText(oldMutationDom);
       }
       if (block.domToMutation) {
-        var dom = Blockly.Xml.textToDom(/** @type {string} */ (value) || '<mutation/>');
+        var dom = Blockly.Xml.textToDom(value || '<mutation/>');
         block.domToMutation(dom);
       }
       Blockly.Events.fire(new Blockly.Events.Change(
@@ -223,7 +224,7 @@ Blockly.Events.Create = function(block) {
   } else {
     this.xml = Blockly.Xml.blockToDom(block);
   }
-  this.ids = Blockly.Events.getDescendantIds(block);
+  this.ids = Blockly.Events.getDescendantIds_(block);
 };
 Blockly.utils.object.inherits(Blockly.Events.Create, Blockly.Events.BlockBase);
 
@@ -276,7 +277,7 @@ Blockly.Events.Create.prototype.run = function(forward) {
     for (var i = 0, id; id = this.ids[i]; i++) {
       var block = workspace.getBlockById(id);
       if (block) {
-        block.dispose(false);
+        block.dispose(false, false);
       } else if (id == this.blockId) {
         // Only complain about root-level block.
         console.warn("Can't uncreate non-existent block: " + id);
@@ -305,7 +306,7 @@ Blockly.Events.Delete = function(block) {
   } else {
     this.oldXml = Blockly.Xml.blockToDom(block);
   }
-  this.ids = Blockly.Events.getDescendantIds(block);
+  this.ids = Blockly.Events.getDescendantIds_(block);
 };
 Blockly.utils.object.inherits(Blockly.Events.Delete, Blockly.Events.BlockBase);
 
@@ -352,7 +353,7 @@ Blockly.Events.Delete.prototype.run = function(forward) {
     for (var i = 0, id; id = this.ids[i]; i++) {
       var block = workspace.getBlockById(id);
       if (block) {
-        block.dispose(false);
+        block.dispose(false, false);
       } else if (id == this.blockId) {
         // Only complain about root-level block.
         console.warn("Can't delete non-existent block: " + id);
@@ -448,7 +449,7 @@ Blockly.Events.Move.prototype.recordNew = function() {
  * @private
  */
 Blockly.Events.Move.prototype.currentLocation_ = function() {
-  var workspace = this.getEventWorkspace_();
+  var workspace = Blockly.Workspace.getById(this.workspaceId);
   var block = workspace.getBlockById(this.blockId);
   var location = {};
   var parent = block.getParent();

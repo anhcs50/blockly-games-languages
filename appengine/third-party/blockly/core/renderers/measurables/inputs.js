@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2019 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2019 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,8 +64,7 @@ Blockly.blockRendering.InputConnection = function(constants, input) {
     this.connectedBlockHeight = 0;
   }
 
-  // TODO (#3186): change references to connectionModel, since that's on
-  // Connection.
+  // TODO: change references to connectionModel, since that's on Connection.
   this.connection = input.connection;
   this.connectionOffsetX = 0;
   this.connectionOffsetY = 0;
@@ -93,8 +95,9 @@ Blockly.blockRendering.InlineInput = function(constants, input) {
   } else {
     // We allow the dark path to show on the parent block so that the child
     // block looks embossed.  This takes up an extra pixel in both x and y.
-    this.width = this.connectedBlockWidth;
-    this.height = this.connectedBlockHeight;
+    this.width = this.connectedBlockWidth +
+        this.constants_.DARK_PATH_OFFSET;
+    this.height = this.connectedBlockHeight + this.constants_.DARK_PATH_OFFSET;
   }
 
   this.connectionOffsetY = this.constants_.TAB_OFFSET_FROM_TOP;
@@ -126,7 +129,8 @@ Blockly.blockRendering.StatementInput = function(constants, input) {
     // We allow the dark path to show on the parent block so that the child
     // block looks embossed.  This takes up an extra pixel in both x and y.
     this.height =
-        this.connectedBlockHeight + this.constants_.STATEMENT_BOTTOM_SPACER;
+        this.connectedBlockHeight + this.constants_.DARK_PATH_OFFSET +
+        this.constants_.STATEMENT_BOTTOM_SPACER;
   }
   this.width = this.constants_.NOTCH_OFFSET_LEFT +
       this.shape.width;

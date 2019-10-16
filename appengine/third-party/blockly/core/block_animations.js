@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2018 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2018 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,7 +132,7 @@ Blockly.blockAnimations.connectionUiEffect = function(block) {
 
 /**
  * Expand a ripple around a connection.
- * @param {!SVGElement} ripple Element to animate.
+ * @param {!Element} ripple Element to animate.
  * @param {!Date} start Date of animation's start.
  * @param {number} scale Scale of workspace.
  * @private
@@ -171,7 +174,7 @@ Blockly.blockAnimations.disconnectUiEffect = function(block) {
 };
 /**
  * Animate a brief wiggle of a disconnected block.
- * @param {!SVGElement} group SVG element to animate.
+ * @param {!Element} group SVG element to animate.
  * @param {number} magnitude Maximum degrees skew (reversed for RTL).
  * @param {!Date} start Date of animation's start.
  * @private

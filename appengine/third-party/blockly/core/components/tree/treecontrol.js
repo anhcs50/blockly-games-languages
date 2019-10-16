@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2019 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2019 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,8 +55,7 @@ Blockly.tree.TreeControl = function(toolbox, config) {
 
   /**
    * Currently selected item.
-   * @type {Blockly.tree.BaseNode}
-   * @private
+   * @private {Blockly.tree.BaseNode}
    */
   this.selectedItem_ = this;
 };
@@ -263,7 +265,6 @@ Blockly.tree.TreeControl.prototype.exitDocument = function() {
 /**
  * Adds the event listeners to the tree.
  * @private
- * @suppress {deprecated} Suppress deprecated bindEvent_ call.
  */
 Blockly.tree.TreeControl.prototype.attachEvents_ = function() {
   var el = this.getElement();

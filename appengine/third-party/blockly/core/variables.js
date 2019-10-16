@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2012 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2012 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -466,7 +469,7 @@ Blockly.Variables.generateVariableFieldDom = function(variableModel) {
  * If no variable exists, creates and returns it.
  * @param {!Blockly.Workspace} workspace The workspace to search for the
  *     variable.  It may be a flyout workspace or main workspace.
- * @param {?string} id The ID to use to look up or create the variable, or null.
+ * @param {string} id The ID to use to look up or create the variable, or null.
  * @param {string=} opt_name The string to use to look up or create the
  *     variable.
  * @param {string=} opt_type The type to use to look up or create the variable.
@@ -490,7 +493,7 @@ Blockly.Variables.getOrCreateVariablePackage = function(workspace, id, opt_name,
  * Always prefers lookup by ID to lookup by name + type.
  * @param {!Blockly.Workspace} workspace The workspace to search for the
  *     variable.  It may be a flyout workspace or main workspace.
- * @param {?string} id The ID to use to look up the variable, or null.
+ * @param {string} id The ID to use to look up the variable, or null.
  * @param {string=} opt_name The string to use to look up the variable.
  *     Only used if lookup by ID fails.
  * @param {string=} opt_type The type to use to look up the variable.
@@ -531,7 +534,7 @@ Blockly.Variables.getVariable = function(workspace, id, opt_name, opt_type) {
  * Helper function to create a variable on the given workspace.
  * @param {!Blockly.Workspace} workspace The workspace in which to create the
  * variable.  It may be a flyout workspace or main workspace.
- * @param {?string} id The ID to use to create the variable, or null.
+ * @param {string} id The ID to use to create the variable, or null.
  * @param {string=} opt_name The string to use to create the variable.
  * @param {string=} opt_type The type to use to create the variable.
  * @return {!Blockly.VariableModel} The variable corresponding to the given ID

@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2012 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2012 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,7 +116,6 @@ Blockly.Names.prototype.getNameForUserVariable_ = function(id) {
  * @param {string} type The type of entity in Blockly
  *     ('VARIABLE', 'PROCEDURE', 'BUILTIN', etc...).
  * @return {string} An entity name that is legal in the exported language.
- * @suppress {deprecated} Suppress deprecated Blockly.Variables.NAME_TYPE.
  */
 Blockly.Names.prototype.getName = function(name, type) {
   if (type == Blockly.Variables.NAME_TYPE) {

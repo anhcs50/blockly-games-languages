@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2012 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2012 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +61,7 @@ Blockly.FieldLabel = function(opt_value, opt_class, opt_config) {
       this, opt_value, null, opt_config);
 
   if (!opt_config) {  // If the config was not passed use old configuration.
-    this.class_ = opt_class || null;
+    this.class_ = opt_class;
   }
 
   /**
@@ -81,13 +84,14 @@ Blockly.utils.object.inherits(Blockly.FieldLabel, Blockly.Field);
  */
 Blockly.FieldLabel.fromJson = function(options) {
   var text = Blockly.utils.replaceMessageReferences(options['text']);
-  return new Blockly.FieldLabel(text, undefined, options);
+  return new Blockly.FieldLabel(text, null, options);
 };
 
 /**
  * Editable fields usually show some sort of UI indicating they are
  * editable. This field should not.
  * @type {boolean}
+ * @const
  */
 Blockly.FieldLabel.prototype.EDITABLE = false;
 

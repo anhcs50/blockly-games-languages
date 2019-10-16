@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2018 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2018 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +47,7 @@ Blockly.Events.Abstract = function() {
    * perspective, and should be undone together.
    * @type {string}
    */
-  this.group = Blockly.Events.getGroup();
+  this.group = Blockly.Events.group_;
 
   /**
    * Sets whether the event should be added to the undo stack.
@@ -93,14 +96,12 @@ Blockly.Events.Abstract.prototype.run = function(_forward) {
 
 /**
  * Get workspace the event belongs to.
- * @return {!Blockly.Workspace} The workspace the event belongs to.
+ * @return {Blockly.Workspace} The workspace the event belongs to.
  * @throws {Error} if workspace is null.
  * @protected
  */
 Blockly.Events.Abstract.prototype.getEventWorkspace_ = function() {
-  if (this.workspaceId) {
-    var workspace = Blockly.Workspace.getById(this.workspaceId);
-  }
+  var workspace = Blockly.Workspace.getById(this.workspaceId);
   if (!workspace) {
     throw Error('Workspace is null. Event must have been generated from real' +
         ' Blockly events.');

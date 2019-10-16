@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2019 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2019 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,13 +62,14 @@ Blockly.utils.object.inherits(Blockly.FieldLabelSerializable,
  */
 Blockly.FieldLabelSerializable.fromJson = function(options) {
   var text = Blockly.utils.replaceMessageReferences(options['text']);
-  return new Blockly.FieldLabelSerializable(text, undefined, options);
+  return new Blockly.FieldLabelSerializable(text, null, options);
 };
 
 /**
  * Editable fields usually show some sort of UI indicating they are
  * editable. This field should not.
  * @type {boolean}
+ * @public
  */
 Blockly.FieldLabelSerializable.prototype.EDITABLE = false;
 
@@ -73,6 +77,7 @@ Blockly.FieldLabelSerializable.prototype.EDITABLE = false;
  * Serializable fields are saved by the XML renderer, non-serializable fields
  * are not.  This field should be serialized, but only edited programmatically.
  * @type {boolean}
+ * @public
  */
 Blockly.FieldLabelSerializable.prototype.SERIALIZABLE = true;
 

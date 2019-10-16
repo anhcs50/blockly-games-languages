@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2017 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2017 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,13 +128,13 @@ Blockly.TouchGesture.prototype.doStart = function(e) {
 Blockly.TouchGesture.prototype.bindMouseEvents = function(e) {
   this.onStartWrapper_ = Blockly.bindEventWithChecks_(
       document, 'mousedown', null, this.handleStart.bind(this),
-      /* opt_noCaptureIdentifier */ true);
+      /*opt_noCaptureIdentifier*/ true);
   this.onMoveWrapper_ = Blockly.bindEventWithChecks_(
       document, 'mousemove', null, this.handleMove.bind(this),
-      /* opt_noCaptureIdentifier */ true);
+      /*opt_noCaptureIdentifier*/ true);
   this.onUpWrapper_ = Blockly.bindEventWithChecks_(
       document, 'mouseup', null, this.handleUp.bind(this),
-      /* opt_noCaptureIdentifier */ true);
+      /*opt_noCaptureIdentifier*/ true);
 
   e.preventDefault();
   e.stopPropagation();

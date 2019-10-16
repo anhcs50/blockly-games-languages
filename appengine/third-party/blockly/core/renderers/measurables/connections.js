@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2019 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2019 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +30,7 @@ goog.provide('Blockly.blockRendering.PreviousConnection');
 
 goog.require('Blockly.blockRendering.Measurable');
 goog.require('Blockly.blockRendering.Types');
+goog.require('Blockly.RenderedConnection');
 goog.require('Blockly.utils.object');
 
 

@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2012 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2012 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +77,7 @@ Blockly.utils.object.inherits(Blockly.FieldCheckbox, Blockly.Field);
  * @nocollapse
  */
 Blockly.FieldCheckbox.fromJson = function(options) {
-  return new Blockly.FieldCheckbox(options['checked'], undefined, options);
+  return new Blockly.FieldCheckbox(options['checked'], null, options);
 };
 
 /**
@@ -109,6 +112,7 @@ Blockly.FieldCheckbox.CHECK_Y_OFFSET = 14;
  * Serializable fields are saved by the XML renderer, non-serializable fields
  * are not. Editable fields should also be serializable.
  * @type {boolean}
+ * @const
  */
 Blockly.FieldCheckbox.prototype.SERIALIZABLE = true;
 
@@ -192,8 +196,7 @@ Blockly.FieldCheckbox.prototype.doClassValidation_ = function(opt_newValue) {
 
 /**
  * Update the value of the field, and update the checkElement.
- * @param {*} newValue The value to be saved. The default validator guarantees
- * that this is a either 'TRUE' or 'FALSE'.
+ * @param {string} newValue The new value ('TRUE' or 'FALSE') of the field.
  * @protected
  */
 Blockly.FieldCheckbox.prototype.doValueUpdate_ = function(newValue) {

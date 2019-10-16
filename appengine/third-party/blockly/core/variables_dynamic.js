@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2017 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2017 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +19,7 @@
  */
 
 /**
- * @fileoverview Utility functions for handling typed variables.
+ * @fileoverview Utility functions for handling variables dynamic.
  *
  * @author duzc2dtw@gmail.com (Du Tian Wei)
  */
@@ -29,6 +32,7 @@ goog.require('Blockly.Blocks');
 goog.require('Blockly.Msg');
 goog.require('Blockly.utils.xml');
 goog.require('Blockly.VariableModel');
+goog.require('Blockly.Xml');
 
 
 Blockly.VariablesDynamic.onCreateVariableButtonClick_String = function(button) {

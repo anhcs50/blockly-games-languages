@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2017 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2017 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -487,7 +490,7 @@ Blockly.WorkspaceCommentSvg.prototype.setDragging = function(adding) {
 
 /**
  * Return the root node of the SVG or null if none exists.
- * @return {SVGElement} The root SVG node (probably a group).
+ * @return {Element} The root SVG node (probably a group).
  * @package
  */
 Blockly.WorkspaceCommentSvg.prototype.getSvgRoot = function() {

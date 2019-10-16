@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2019 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2019 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +45,11 @@ Blockly.blockRendering.ConstantProvider = function() {
   // and statement input rows.
   // Matches existing rendering (in 2019).
   this.TALL_INPUT_FIELD_OFFSET_Y = this.MEDIUM_PADDING;
+
+
+  // The dark/shadow path in classic rendering is the same as the normal block
+  // path, but translated down one and right one.
+  this.DARK_PATH_OFFSET = 1;
 
   this.TAB_HEIGHT = 15;
 
@@ -288,6 +296,7 @@ Blockly.blockRendering.ConstantProvider.prototype.makeNotch = function() {
           Blockly.utils.svgPaths.point(dir * outerWidth, -height)
         ]);
   }
+  // TODO: Find a relationship between width and path
   var pathLeft = makeMainPath(1);
   var pathRight = makeMainPath(-1);
 

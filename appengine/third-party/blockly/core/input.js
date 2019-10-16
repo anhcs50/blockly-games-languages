@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2012 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2012 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,7 +136,7 @@ Blockly.Input.prototype.insertFieldAt = function(index, field, opt_name) {
   if (this.sourceBlock_.rendered) {
     this.sourceBlock_.render();
     // Adding a field will cause the block to change shape.
-    this.sourceBlock_.bumpNeighbours();
+    this.sourceBlock_.bumpNeighbours_();
   }
   return index;
 };
@@ -151,7 +154,7 @@ Blockly.Input.prototype.removeField = function(name) {
       if (this.sourceBlock_.rendered) {
         this.sourceBlock_.render();
         // Removing a field will cause the block to change shape.
-        this.sourceBlock_.bumpNeighbours();
+        this.sourceBlock_.bumpNeighbours_();
       }
       return;
     }
@@ -175,9 +178,6 @@ Blockly.Input.prototype.isVisible = function() {
  * @package
  */
 Blockly.Input.prototype.setVisible = function(visible) {
-  // Note: Currently there are only unit tests for block.setCollapsed()
-  // because this function is package. If this function goes back to being a
-  // public API tests (lots of tests) should be added.
   var renderList = [];
   if (this.visible_ == visible) {
     return renderList;
@@ -191,9 +191,9 @@ Blockly.Input.prototype.setVisible = function(visible) {
   if (this.connection) {
     // Has a connection.
     if (visible) {
-      renderList = this.connection.startTrackingAll();
+      renderList = this.connection.unhideAll();
     } else {
-      this.connection.stopTrackingAll();
+      this.connection.hideAll();
     }
     var child = this.connection.targetBlock();
     if (child) {
@@ -204,16 +204,6 @@ Blockly.Input.prototype.setVisible = function(visible) {
     }
   }
   return renderList;
-};
-
-/**
- * Mark all fields on this input as dirty.
- * @package
- */
-Blockly.Input.prototype.markDirty = function() {
-  for (var y = 0, field; field = this.fieldRow[y]; y++) {
-    field.markDirty();
-  }
 };
 
 /**

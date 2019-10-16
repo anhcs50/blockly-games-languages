@@ -1,5 +1,7 @@
 /**
  * @license
+ * Visual Blocks Editor
+ *
  * Copyright 2016 Massachusetts Institute of Technology
  * All rights reserved.
  *
@@ -26,8 +28,8 @@
 
 goog.provide('Blockly.DropDownDiv');
 
-goog.require('Blockly.utils.dom');
 goog.require('Blockly.utils.math');
+
 goog.require('Blockly.utils.style');
 
 
@@ -62,7 +64,7 @@ Blockly.DropDownDiv.owner_ = null;
 
 /**
  * Whether the dropdown was positioned to a field or the source block.
- * @type {?boolean}
+ * @type {boolean}
  * @private
  */
 Blockly.DropDownDiv.positionToField_ = null;
@@ -103,31 +105,17 @@ Blockly.DropDownDiv.PADDING_Y = 16;
 Blockly.DropDownDiv.ANIMATION_TIME = 0.25;
 
 /**
- * The default dropdown div border color.
- * @type {string}
- * @const
- */
-Blockly.DropDownDiv.DEFAULT_DROPDOWN_BORDER_COLOR = '#dadce0';
-
-/**
- * The default dropdown div color.
- * @type {string}
- * @const
- */
-Blockly.DropDownDiv.DEFAULT_DROPDOWN_COLOR = '#fff';
-
-/**
  * Timer for animation out, to be cleared if we need to immediately hide
  * without disrupting new shows.
- * @type {?number}
+ * @type {number}
  */
 Blockly.DropDownDiv.animateOutTimer_ = null;
 
 /**
  * Callback for when the drop-down is hidden.
- * @type {?Function}
+ * @type {Function}
  */
-Blockly.DropDownDiv.onHide_ = null;
+Blockly.DropDownDiv.onHide_ = 0;
 
 /**
  * Create and insert the DOM element for this div.
@@ -138,8 +126,6 @@ Blockly.DropDownDiv.createDom = function() {
   }
   var div = document.createElement('div');
   div.className = 'blocklyDropDownDiv';
-  div.style.backgroundColor = Blockly.DropDownDiv.DEFAULT_DROPDOWN_COLOR;
-  div.style.borderColor = Blockly.DropDownDiv.DEFAULT_DROPDOWN_BORDER_COLOR;
   document.body.appendChild(div);
   Blockly.DropDownDiv.DIV_ = div;
 
@@ -243,10 +229,8 @@ Blockly.DropDownDiv.showPositionedByBlock = function(field, block,
     secondaryY += opt_secondaryYOffset;
   }
   // Set bounds to workspace; show the drop-down.
-  Blockly.DropDownDiv.setBoundsElement(
-      block.workspace.getParentSvg().parentNode);
-  return Blockly.DropDownDiv.show(
-      field, block.RTL, primaryX, primaryY, secondaryX, secondaryY, opt_onHide);
+  Blockly.DropDownDiv.setBoundsElement(block.workspace.getParentSvg().parentNode);
+  return Blockly.DropDownDiv.show(field, primaryX, primaryY, secondaryX, secondaryY, opt_onHide);
 };
 
 /**
@@ -254,16 +238,16 @@ Blockly.DropDownDiv.showPositionedByBlock = function(field, block,
  * by a particular field. The primary position will be below the field,
  * and the secondary position above the field. Drop-down will be
  * constrained to the block's workspace.
- * @param {!Blockly.Field} field The field to position the dropdown against.
+ * @param {!Object} owner The object showing the drop-down.
  * @param {Function=} opt_onHide Optional callback for when the drop-down is
  *   hidden.
  * @param {number=} opt_secondaryYOffset Optional Y offset for above-block
  *   positioning.
  * @return {boolean} True if the menu rendered below block; false if above.
  */
-Blockly.DropDownDiv.showPositionedByField = function(field,
+Blockly.DropDownDiv.showPositionedByField = function(owner,
     opt_onHide, opt_secondaryYOffset) {
-  var position = field.getSvgRoot().getBoundingClientRect();
+  var position = owner.fieldGroup_.getBoundingClientRect();
   // If we can fit it, render below the block.
   var primaryX = position.left + position.width / 2;
   var primaryY = position.bottom;
@@ -273,14 +257,12 @@ Blockly.DropDownDiv.showPositionedByField = function(field,
   if (opt_secondaryYOffset) {
     secondaryY += opt_secondaryYOffset;
   }
-  var sourceBlock = field.getSourceBlock();
   // Set bounds to workspace; show the drop-down.
   Blockly.DropDownDiv.positionToField_ = true;
   Blockly.DropDownDiv.setBoundsElement(
-      sourceBlock.workspace.getParentSvg().parentNode);
+      owner.getSourceBlock().workspace.getParentSvg().parentNode);
   return Blockly.DropDownDiv.show(
-      field, sourceBlock.RTL,
-      primaryX, primaryY, secondaryX, secondaryY, opt_onHide);
+      owner, primaryX, primaryY, secondaryX, secondaryY, opt_onHide);
 };
 
 /**
@@ -292,34 +274,29 @@ Blockly.DropDownDiv.showPositionedByField = function(field,
  * If we can't maintain the container bounds at the primary point, fall-back to the
  * secondary point and position above.
  * @param {Object} owner The object showing the drop-down
- * @param {boolean} rtl Right-to-left (true) or left-to-right (false).
  * @param {number} primaryX Desired origin point x, in absolute px
  * @param {number} primaryY Desired origin point y, in absolute px
  * @param {number} secondaryX Secondary/alternative origin point x, in absolute px
  * @param {number} secondaryY Secondary/alternative origin point y, in absolute px
  * @param {Function=} opt_onHide Optional callback for when the drop-down is hidden
  * @return {boolean} True if the menu rendered at the primary origin point.
- * @package
  */
-Blockly.DropDownDiv.show = function(owner, rtl, primaryX, primaryY,
+Blockly.DropDownDiv.show = function(owner, primaryX, primaryY,
     secondaryX, secondaryY, opt_onHide) {
   Blockly.DropDownDiv.owner_ = owner;
-  Blockly.DropDownDiv.onHide_ = opt_onHide || null;
+  Blockly.DropDownDiv.onHide_ = opt_onHide;
   var metrics = Blockly.DropDownDiv.getPositionMetrics(primaryX, primaryY,
       secondaryX, secondaryY);
   // Update arrow CSS.
   if (metrics.arrowVisible) {
     Blockly.DropDownDiv.arrow_.style.display = '';
     Blockly.DropDownDiv.arrow_.style.transform = 'translate(' +
-        metrics.arrowX + 'px,' + metrics.arrowY + 'px) rotate(45deg)';
+      metrics.arrowX + 'px,' + metrics.arrowY + 'px) rotate(45deg)'; // rotate(45deg)
     Blockly.DropDownDiv.arrow_.setAttribute('class', metrics.arrowAtTop ?
-        'blocklyDropDownArrow arrowTop' : 'blocklyDropDownArrow arrowBottom');
+      'blocklyDropDownArrow arrowTop' : 'blocklyDropDownArrow arrowBottom');
   } else {
     Blockly.DropDownDiv.arrow_.style.display = 'none';
   }
-
-  // Set direction.
-  Blockly.DropDownDiv.DIV_.style.direction = rtl ? 'rtl' : 'ltr';
 
   // When we change `translate` multiple times in close succession,
   // Chrome may choose to wait and apply them all at once.
@@ -343,6 +320,8 @@ Blockly.DropDownDiv.show = function(owner, rtl, primaryX, primaryY,
  * @private
  */
 Blockly.DropDownDiv.getBoundsInfo_ = function() {
+  // TODO (#2744): Account for toolboxes.
+
   var boundPosition = Blockly.DropDownDiv.boundsElement_.getBoundingClientRect();
   var boundSize = Blockly.utils.style.getSize(Blockly.DropDownDiv.boundsElement_);
 
@@ -371,8 +350,7 @@ Blockly.DropDownDiv.getBoundsInfo_ = function() {
 Blockly.DropDownDiv.getPositionMetrics = function(primaryX, primaryY,
     secondaryX, secondaryY) {
   var boundsInfo = Blockly.DropDownDiv.getBoundsInfo_();
-  var divSize = Blockly.utils.style.getSize(
-      /** @type {!Element} */ (Blockly.DropDownDiv.DIV_));
+  var divSize = Blockly.utils.style.getSize(Blockly.DropDownDiv.DIV_);
 
   // Can we fit in-bounds below the target?
   if (primaryY + divSize.height < boundsInfo.bottom) {
@@ -545,17 +523,11 @@ Blockly.DropDownDiv.isVisible = function() {
 /**
  * Hide the menu only if it is owned by the provided object.
  * @param {Object} owner Object which must be owning the drop-down to hide.
- * @param {boolean=} opt_withoutAnimation True if we should hide the dropdown
- *     without animating.
  * @return {boolean} True if hidden.
  */
-Blockly.DropDownDiv.hideIfOwner = function(owner, opt_withoutAnimation) {
+Blockly.DropDownDiv.hideIfOwner = function(owner) {
   if (Blockly.DropDownDiv.owner_ === owner) {
-    if (opt_withoutAnimation) {
-      Blockly.DropDownDiv.hideWithoutAnimation();
-    } else {
-      Blockly.DropDownDiv.hide();
-    }
+    Blockly.DropDownDiv.hide();
     return true;
   }
   return false;
@@ -572,9 +544,8 @@ Blockly.DropDownDiv.hide = function() {
   div.style.opacity = 0;
   // Finish animation - reset all values to default.
   Blockly.DropDownDiv.animateOutTimer_ =
-      setTimeout(function() {
-        Blockly.DropDownDiv.hideWithoutAnimation();
-      }, Blockly.DropDownDiv.ANIMATION_TIME * 1000);
+      setTimeout(Blockly.DropDownDiv.hideWithoutAnimation,
+          Blockly.DropDownDiv.ANIMATION_TIME * 1000);
   if (Blockly.DropDownDiv.onHide_) {
     Blockly.DropDownDiv.onHide_();
     Blockly.DropDownDiv.onHide_ = null;
@@ -600,15 +571,13 @@ Blockly.DropDownDiv.hideWithoutAnimation = function() {
   div.style.top = '';
   div.style.opacity = 0;
   div.style.display = 'none';
-  div.style.backgroundColor = Blockly.DropDownDiv.DEFAULT_DROPDOWN_COLOR;
-  div.style.borderColor = Blockly.DropDownDiv.DEFAULT_DROPDOWN_BORDER_COLOR;
 
+  Blockly.DropDownDiv.clearContent();
+  Blockly.DropDownDiv.owner_ = null;
   if (Blockly.DropDownDiv.onHide_) {
     Blockly.DropDownDiv.onHide_();
     Blockly.DropDownDiv.onHide_ = null;
   }
-  Blockly.DropDownDiv.clearContent();
-  Blockly.DropDownDiv.owner_ = null;
 };
 
 /**

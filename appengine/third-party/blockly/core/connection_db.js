@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2011 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2011 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +19,14 @@
  */
 
 /**
- * @fileoverview A database of all the rendered connections that could
- *    possibly be connected to (i.e. not collapsed, etc).
- *    Sorted by y coordinate.
+ * @fileoverview Components for managing connections between blocks.
  * @author fraser@google.com (Neil Fraser)
  */
 'use strict';
 
 goog.provide('Blockly.ConnectionDB');
 
-goog.require('Blockly.RenderedConnection');
+goog.require('Blockly.Connection');
 
 
 /**
@@ -36,42 +37,44 @@ goog.require('Blockly.RenderedConnection');
  */
 Blockly.ConnectionDB = function() {
   /**
-   * Array of connections sorted by y position in workspace units.
-   * @type {!Array.<!Blockly.RenderedConnection>}
+   * Array of connections sorted by y coordinate.
+   * @type {!Array.<!Blockly.Connection>}
    * @private
    */
   this.connections_ = [];
 };
 
 /**
- * Add a connection to the database. Should not already exist in the database.
- * @param {!Blockly.RenderedConnection} connection The connection to be added.
- * @param {number} yPos The y position used to decide where to insert the
- *    connection.
- * @package
+ * Add a connection to the database.  Must not already exist in DB.
+ * @param {!Blockly.Connection} connection The connection to be added.
  */
-Blockly.ConnectionDB.prototype.addConnection = function(connection, yPos) {
-  var index = this.calculateIndexForYPos_(yPos);
-  this.connections_.splice(index, 0, connection);
+Blockly.ConnectionDB.prototype.addConnection = function(connection) {
+  if (connection.inDB_) {
+    throw Error('Connection already in database.');
+  }
+  if (connection.getSourceBlock().isInFlyout) {
+    // Don't bother maintaining a database of connections in a flyout.
+    return;
+  }
+  var position = this.findPositionForConnection_(connection);
+  this.connections_.splice(position, 0, connection);
+  connection.inDB_ = true;
 };
 
 /**
- * Finds the index of the given connection.
- *
+ * Find the given connection.
  * Starts by doing a binary search to find the approximate location, then
- * linearly searches nearby for the exact connection.
- * @param {!Blockly.RenderedConnection} conn The connection to find.
- * @param {number} yPos The y position used to find the index of the connection.
+ *     linearly searches nearby for the exact connection.
+ * @param {!Blockly.Connection} conn The connection to find.
  * @return {number} The index of the connection, or -1 if the connection was
  *     not found.
- * @private
  */
-Blockly.ConnectionDB.prototype.findIndexOfConnection_ = function(conn, yPos) {
+Blockly.ConnectionDB.prototype.findConnection = function(conn) {
   if (!this.connections_.length) {
     return -1;
   }
 
-  var bestGuess = this.calculateIndexForYPos_(yPos);
+  var bestGuess = this.findPositionForConnection_(conn);
   if (bestGuess >= this.connections_.length) {
     // Not in list
     return -1;
@@ -99,13 +102,15 @@ Blockly.ConnectionDB.prototype.findIndexOfConnection_ = function(conn, yPos) {
 };
 
 /**
- * Finds the correct index for the given y position.
- * @param {number} yPos The y position used to decide where to
- *    insert the connection.
+ * Finds a candidate position for inserting this connection into the list.
+ * This will be in the correct y order but makes no guarantees about ordering in
+ *     the x axis.
+ * @param {!Blockly.Connection} connection The connection to insert.
  * @return {number} The candidate index.
  * @private
  */
-Blockly.ConnectionDB.prototype.calculateIndexForYPos_ = function(yPos) {
+Blockly.ConnectionDB.prototype.findPositionForConnection_ = function(
+    connection) {
   if (!this.connections_.length) {
     return 0;
   }
@@ -113,9 +118,9 @@ Blockly.ConnectionDB.prototype.calculateIndexForYPos_ = function(yPos) {
   var pointerMax = this.connections_.length;
   while (pointerMin < pointerMax) {
     var pointerMid = Math.floor((pointerMin + pointerMax) / 2);
-    if (this.connections_[pointerMid].y_ < yPos) {
+    if (this.connections_[pointerMid].y_ < connection.y_) {
       pointerMin = pointerMid + 1;
-    } else if (this.connections_[pointerMid].y_ > yPos) {
+    } else if (this.connections_[pointerMid].y_ > connection.y_) {
       pointerMax = pointerMid;
     } else {
       pointerMin = pointerMid;
@@ -127,25 +132,28 @@ Blockly.ConnectionDB.prototype.calculateIndexForYPos_ = function(yPos) {
 
 /**
  * Remove a connection from the database.  Must already exist in DB.
- * @param {!Blockly.RenderedConnection} connection The connection to be removed.
- * @param {number} yPos The y position used to find the index of the connection.
- * @throws {Error} If the connection cannot be found in the database.
+ * @param {!Blockly.Connection} connection The connection to be removed.
+ * @private
  */
-Blockly.ConnectionDB.prototype.removeConnection = function(connection, yPos) {
-  var index = this.findIndexOfConnection_(connection, yPos);
-  if (index == -1) {
+Blockly.ConnectionDB.prototype.removeConnection_ = function(connection) {
+  if (!connection.inDB_) {
+    throw Error('Connection not in database.');
+  }
+  var removalIndex = this.findConnection(connection);
+  if (removalIndex == -1) {
     throw Error('Unable to find connection in connectionDB.');
   }
-  this.connections_.splice(index, 1);
+  connection.inDB_ = false;
+  this.connections_.splice(removalIndex, 1);
 };
 
 /**
  * Find all nearby connections to the given connection.
  * Type checking does not apply, since this function is used for bumping.
- * @param {!Blockly.RenderedConnection} connection The connection whose
- *     neighbours should be returned.
+ * @param {!Blockly.Connection} connection The connection whose neighbours
+ *     should be returned.
  * @param {number} maxRadius The maximum radius to another connection.
- * @return {!Array.<!Blockly.RenderedConnection>} List of connections.
+ * @return {!Array.<!Blockly.Connection>} List of connections.
  */
 Blockly.ConnectionDB.prototype.getNeighbours = function(connection, maxRadius) {
   var db = this.connections_;
@@ -199,6 +207,7 @@ Blockly.ConnectionDB.prototype.getNeighbours = function(connection, maxRadius) {
   return neighbours;
 };
 
+
 /**
  * Is the candidate connection close to the reference connection.
  * Extremely fast; only looks at Y distance.
@@ -214,15 +223,15 @@ Blockly.ConnectionDB.prototype.isInYRange_ = function(index, baseY, maxRadius) {
 
 /**
  * Find the closest compatible connection to this connection.
- * @param {!Blockly.RenderedConnection} conn The connection searching for a compatible
+ * @param {!Blockly.Connection} conn The connection searching for a compatible
  *     mate.
  * @param {number} maxRadius The maximum radius to another connection.
  * @param {!Blockly.utils.Coordinate} dxy Offset between this connection's
  *     location in the database and the current location (as a result of
  *     dragging).
- * @return {!{connection: Blockly.RenderedConnection, radius: number}}
- *     Contains two properties: 'connection' which is either another
- *     connection or null, and 'radius' which is the distance.
+ * @return {!{connection: ?Blockly.Connection, radius: number}} Contains two
+ *     properties:' connection' which is either another connection or null,
+ *     and 'radius' which is the distance.
  */
 Blockly.ConnectionDB.prototype.searchForClosest = function(conn, maxRadius,
     dxy) {
@@ -238,10 +247,10 @@ Blockly.ConnectionDB.prototype.searchForClosest = function(conn, maxRadius,
   conn.x_ = baseX + dxy.x;
   conn.y_ = baseY + dxy.y;
 
-  // calculateIndexForYPos_ finds an index for insertion, which is always
+  // findPositionForConnection finds an index for insertion, which is always
   // after any block with the same y index.  We want to search both forward
   // and back, so search on both sides of the index.
-  var closestIndex = this.calculateIndexForYPos_(conn.y_);
+  var closestIndex = this.findPositionForConnection_(conn);
 
   var bestConnection = null;
   var bestRadius = maxRadius;

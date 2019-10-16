@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2019 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2019 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,19 +74,20 @@ Blockly.utils.object.inherits(Blockly.MenuItem, Blockly.Component);
  */
 Blockly.MenuItem.prototype.createDom = function() {
   var element = document.createElement('div');
-  element.id = this.getId();
+  element.setAttribute('id', this.getId());
   this.setElementInternal(element);
 
   // Set class and style
-  element.className = 'goog-menuitem goog-option ' +
+  element.setAttribute('class', 'goog-menuitem goog-option ' +
       (!this.enabled_ ? 'goog-menuitem-disabled ' : '') +
       (this.checked_ ? 'goog-option-selected ' : '') +
-      (this.isRightToLeft() ? 'goog-menuitem-rtl ' : '');
+      (this.isRightToLeft() ? 'goog-menuitem-rtl ' : ''));
+  element.setAttribute('style', 'user-select: none');
 
   var content = this.getContentWrapperDom();
   element.appendChild(content);
 
-  // Add a checkbox for checkable menu items.
+  // Add a cheeckbox for checkable menu items.
   var checkboxDom = this.getCheckboxDom();
   if (checkboxDom) {
     content.appendChild(checkboxDom);
@@ -95,8 +99,8 @@ Blockly.MenuItem.prototype.createDom = function() {
   Blockly.utils.aria.setRole(element, this.roleName_ || (this.checkable_ ?
       Blockly.utils.aria.Role.MENUITEMCHECKBOX :
       Blockly.utils.aria.Role.MENUITEM));
-  Blockly.utils.aria.setState(element, Blockly.utils.aria.State.SELECTED,
-      (this.checkable_ && this.checked_) || false);
+  Blockly.utils.aria.setState(element,
+      Blockly.utils.aria.State.SELECTED, (this.checkable_ && this.checked_) || false);
 };
 
 /**
@@ -108,7 +112,8 @@ Blockly.MenuItem.prototype.getCheckboxDom = function() {
     return null;
   }
   var menuItemCheckbox = document.createElement('div');
-  menuItemCheckbox.className = 'goog-menuitem-checkbox';
+  menuItemCheckbox.setAttribute('class', 'goog-menuitem-checkbox');
+  menuItemCheckbox.setAttribute('style', 'user-select: none;');
   return menuItemCheckbox;
 };
 
@@ -130,7 +135,8 @@ Blockly.MenuItem.prototype.getContentDom = function() {
  */
 Blockly.MenuItem.prototype.getContentWrapperDom = function() {
   var contentWrapper = document.createElement('div');
-  contentWrapper.className = 'goog-menuitem-content';
+  contentWrapper.setAttribute('class', 'goog-menuitem-content');
+  contentWrapper.setAttribute('style', 'user-select: none;');
   return contentWrapper;
 };
 
@@ -164,7 +170,7 @@ Blockly.MenuItem.prototype.getValue = function() {
 
 /**
  * Set the menu accessibility role.
- * @param {!Blockly.utils.aria.Role} roleName Role name.
+ * @param {!Blockly.utils.aria.Role|string} roleName role name.
  * @package
  */
 Blockly.MenuItem.prototype.setRole = function(roleName) {
@@ -204,6 +210,15 @@ Blockly.MenuItem.prototype.setChecked = function(checked) {
           Blockly.utils.aria.State.SELECTED, false);
     }
   }
+};
+
+/**
+ * Returns true if the component is currently highlighted, false otherwise.
+ * @return {boolean} Whether the component is highlighted.
+ * @package
+ */
+Blockly.MenuItem.prototype.isHighlighted = function() {
+  return this.highlight_;
 };
 
 /**

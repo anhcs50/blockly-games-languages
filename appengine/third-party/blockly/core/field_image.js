@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2012 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2012 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,13 +118,6 @@ Blockly.FieldImage = function(src, width, height,
   if (typeof opt_onClick == 'function') {
     this.clickHandler_ = opt_onClick;
   }
-
-  /**
-   * The rendered field's image element.
-   * @type {SVGImageElement}
-   * @private
-   */
-  this.imageElement_ = null;
 };
 Blockly.utils.object.inherits(Blockly.FieldImage, Blockly.Field);
 
@@ -137,7 +133,7 @@ Blockly.utils.object.inherits(Blockly.FieldImage, Blockly.Field);
 Blockly.FieldImage.fromJson = function(options) {
   return new Blockly.FieldImage(
       options['src'], options['width'], options['height'],
-      undefined, undefined, undefined, options);
+      null, null, null, options);
 };
 
 /**
@@ -152,6 +148,7 @@ Blockly.FieldImage.Y_PADDING = 1;
  * Editable fields usually show some sort of UI indicating they are
  * editable. This field should not.
  * @type {boolean}
+ * @const
  */
 Blockly.FieldImage.prototype.EDITABLE = false;
 
@@ -180,15 +177,14 @@ Blockly.FieldImage.prototype.configure_ = function(config) {
  * @package
  */
 Blockly.FieldImage.prototype.initView = function() {
-  this.imageElement_ = /** @type {!SVGImageElement} */
-      (Blockly.utils.dom.createSvgElement(
-          'image',
-          {
-            'height': this.imageHeight_ + 'px',
-            'width': this.size_.width + 'px',
-            'alt': this.altText_
-          },
-          this.fieldGroup_));
+  this.imageElement_ = Blockly.utils.dom.createSvgElement(
+      'image',
+      {
+        'height': this.imageHeight_ + 'px',
+        'width': this.size_.width + 'px',
+        'alt': this.altText_
+      },
+      this.fieldGroup_);
   this.imageElement_.setAttributeNS(Blockly.utils.dom.XLINK_NS,
       'xlink:href', /** @type {string} */ (this.value_));
 };
@@ -208,15 +204,14 @@ Blockly.FieldImage.prototype.doClassValidation_ = function(opt_newValue) {
 
 /**
  * Update the value of this image field, and update the displayed image.
- * @param {*} newValue The value to be saved. The default validator guarantees
- * that this is a string.
+ * @param {string} newValue The new image src.
  * @protected
  */
 Blockly.FieldImage.prototype.doValueUpdate_ = function(newValue) {
   this.value_ = newValue;
   if (this.imageElement_) {
     this.imageElement_.setAttributeNS(Blockly.utils.dom.XLINK_NS,
-        'xlink:href', String(this.value_));
+        'xlink:href', this.value_ || '');
   }
 };
 

@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2011 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2011 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,19 +30,22 @@
  */
 goog.provide('Blockly');
 
-goog.require('Blockly.constants');
+goog.require('Blockly.BlockSvg.render');
 goog.require('Blockly.Events');
 goog.require('Blockly.Events.Ui');
-goog.require('Blockly.inject');
+goog.require('Blockly.Generator');
+goog.require('Blockly.HorizontalFlyout');
 goog.require('Blockly.navigation');
 goog.require('Blockly.Procedures');
 goog.require('Blockly.Tooltip');
 goog.require('Blockly.Touch');
-goog.require('Blockly.utils');
-goog.require('Blockly.utils.colour');
-goog.require('Blockly.Variables');
+goog.require('Blockly.VerticalFlyout');
 goog.require('Blockly.WidgetDiv');
 goog.require('Blockly.WorkspaceSvg');
+goog.require('Blockly.constants');
+goog.require('Blockly.inject');
+goog.require('Blockly.utils');
+goog.require('Blockly.utils.colour');
 goog.require('Blockly.Xml');
 
 
@@ -114,11 +120,11 @@ Blockly.clipboardTypeCounts_ = null;
 Blockly.cache3dSupported_ = null;
 
 /**
- * Blockly opaque event data used to unbind events when using
- * `Blockly.bindEvent_` and `Blockly.bindEventWithChecks_`.
- * @typedef {!Array.<!Array>}
+ * Holds all Blockly style attributes.
+ * @type {Blockly.Theme}
+ * @private
  */
-Blockly.EventData;
+Blockly.theme_ = null;
 
 /**
  * Returns the dimensions of the specified SVG image.
@@ -346,11 +352,10 @@ Blockly.hideChaff = function(opt_allowToolbox) {
       workspace.trashcan.flyout_) {
       workspace.trashcan.flyout_.hide();
     }
-    var toolbox = workspace.getToolbox();
-    if (toolbox &&
-        toolbox.flyout_ &&
-        toolbox.flyout_.autoClose) {
-      toolbox.clearSelection();
+    if (workspace.toolbox_ &&
+        workspace.toolbox_.flyout_ &&
+        workspace.toolbox_.flyout_.autoClose) {
+      workspace.toolbox_.clearSelection();
     }
   }
 };
@@ -462,7 +467,7 @@ Blockly.defineBlocksWithJsonArray = function(jsonArray) {
  *     should prevent the default handler.  False by default.  If
  *     opt_noPreventDefault is provided, opt_noCaptureIdentifier must also be
  *     provided.
- * @return {!Blockly.EventData} Opaque data that can be passed to unbindEvent_.
+ * @return {!Array.<!Array>} Opaque data that can be passed to unbindEvent_.
  */
 Blockly.bindEventWithChecks_ = function(node, name, thisObject, func,
     opt_noCaptureIdentifier, opt_noPreventDefault) {
@@ -528,7 +533,7 @@ Blockly.bindEventWithChecks_ = function(node, name, thisObject, func,
  * @param {string} name Event name to listen to (e.g. 'mousedown').
  * @param {Object} thisObject The value of 'this' in the function.
  * @param {!Function} func Function to call when event is triggered.
- * @return {!Blockly.EventData} Opaque data that can be passed to unbindEvent_.
+ * @return {!Array.<!Array>} Opaque data that can be passed to unbindEvent_.
  */
 Blockly.bindEvent_ = function(node, name, thisObject, func) {
   var wrapFunc = function(e) {
@@ -680,4 +685,73 @@ Blockly.checkBlockColourConstant_ = function(
     var warning = warningPattern.replace('%1', namePath).replace('%2', msgName);
     console.warn(warning);
   }
+};
+
+
+/**
+ * Sets the theme for Blockly and refreshes all blocks in the toolbox and
+ * workspace.
+ * @param {!Blockly.Theme} theme Theme for Blockly.
+ */
+Blockly.setTheme = function(theme) {
+  Blockly.theme_ = theme;
+  var ws = Blockly.getMainWorkspace();
+
+  if (ws) {
+    Blockly.refreshTheme_(ws);
+  }
+};
+
+/**
+ * Refresh the theme for all items on the workspace.
+ * @param {!Blockly.Workspace} ws Blockly workspace to refresh theme on.
+ * @private
+ */
+Blockly.refreshTheme_ = function(ws) {
+  // Update all blocks in workspace that have a style name.
+  Blockly.updateBlockStyles_(ws.getAllBlocks().filter(
+      function(block) {
+        return block.getStyleName() !== undefined;
+      }
+  ));
+
+  // Update blocks in the flyout.
+  if (!ws.toolbox_ && ws.flyout_ && ws.flyout_.workspace_) {
+    Blockly.updateBlockStyles_(ws.flyout_.workspace_.getAllBlocks());
+  } else {
+    ws.refreshToolboxSelection();
+  }
+
+  // Update colours on the categories.
+  if (ws.toolbox_) {
+    ws.toolbox_.updateColourFromTheme();
+  }
+
+  var event = new Blockly.Events.Ui(null, 'theme');
+  event.workspaceId = ws.id;
+  Blockly.Events.fire(event);
+};
+
+/**
+ * Updates all the blocks with new style.
+ * @param {!Array.<!Blockly.Block>} blocks List of blocks to update the style
+ * on.
+ * @private
+ */
+Blockly.updateBlockStyles_ = function(blocks) {
+  for (var i = 0, block; block = blocks[i]; i++) {
+    var blockStyleName = block.getStyleName();
+    block.setStyle(blockStyleName);
+    if (block.mutator) {
+      block.mutator.updateBlockStyle(blockStyleName);
+    }
+  }
+};
+
+/**
+ * Gets the theme.
+ * @return {Blockly.Theme} Theme for Blockly.
+ */
+Blockly.getTheme = function() {
+  return Blockly.theme_;
 };

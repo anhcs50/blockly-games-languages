@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2012 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2012 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +115,7 @@ Blockly.BlockSvg = function(workspace, prototypeName, opt_id) {
 
   // Expose this block's ID on its top-level SVG group.
   if (this.svgGroup_.dataset) {
-    this.svgGroup_.dataset['id'] = this.id;
+    this.svgGroup_.dataset.id = this.id;
   }
 
   /**
@@ -130,14 +133,6 @@ Blockly.BlockSvg = function(workspace, prototypeName, opt_id) {
    * @private
    */
   this.markerSvg_ = null;
-
-  /**
-   * Should the block tell its connections to start tracking inside the render
-   * method?
-   * @type {boolean}
-   * @private
-   */
-  this.callTrackConnections_ = true;
 };
 Blockly.utils.object.inherits(Blockly.BlockSvg, Blockly.Block);
 
@@ -146,7 +141,6 @@ Blockly.utils.object.inherits(Blockly.BlockSvg, Blockly.Block);
  * Height is in workspace units.
  */
 Blockly.BlockSvg.prototype.height = 0;
-
 /**
  * Width of this block, including any connected value blocks.
  * Width is in workspace units.
@@ -183,59 +177,6 @@ Blockly.BlockSvg.INLINE = -1;
  * @const
  */
 Blockly.BlockSvg.COLLAPSED_WARNING_ID = 'TEMP_COLLAPSED_WARNING_';
-
-// Leftover UI constants from block_render_svg.js.
-/**
- * Vertical space between elements.
- * @const
- * @package
- */
-// TODO (#3142): Remove.
-Blockly.BlockSvg.SEP_SPACE_Y = 10;
-
-/**
- * Minimum height of a block.
- * @const
- * @package
- */
-// TODO (#3142): Remove.
-Blockly.BlockSvg.MIN_BLOCK_Y = 25;
-
-/**
- * Width of horizontal puzzle tab.
- * @const
- * @package
- */
-// TODO (#3142): Remove.
-Blockly.BlockSvg.TAB_WIDTH = 8;
-
-/**
- * Do blocks with no previous or output connections have a 'hat' on top?
- * @const
- * @package
- */
-// TODO (#3142): Remove.
-Blockly.BlockSvg.START_HAT = false;
-
-/**
- * An optional method called when a mutator dialog is first opened.
- * This function must create and initialize a top-level block for the mutator
- * dialog, and return it. This function should also populate this top-level
- * block with any sub-blocks which are appropriate. This method must also be
- * coupled with defining a `compose` method for the default mutation dialog
- * button and UI to appear.
- * @type {?function(Blockly.WorkspaceSvg):!Blockly.BlockSvg}
- */
-Blockly.BlockSvg.prototype.decompose;
-
-/**
- * An optional method called when a mutator dialog saves its content.
- * This function is called to modify the original block according to new
- * settings. This method must also be coupled with defining a `decompose`
- * method for the default mutation dialog button and UI to appear.
- * @type {?function(!Blockly.BlockSvg)}
- */
-Blockly.BlockSvg.prototype.compose;
 
 /**
  * Create and initialize the SVG representation of the block.
@@ -597,16 +538,6 @@ Blockly.BlockSvg.prototype.getBoundingRectangle = function() {
     right = blockXY.x + blockBounds.width - tab;
   }
   return new Blockly.utils.Rect(top, bottom, left, right);
-};
-
-/**
- * Notify every input on this block to mark its fields as dirty.
- * A dirty field is a field that needs to be re-rendererd.
- */
-Blockly.BlockSvg.prototype.markDirty = function() {
-  for (var i = 0, input; input = this.inputList[i]; i++) {
-    input.markDirty();
-  }
 };
 
 /**
@@ -977,7 +908,7 @@ Blockly.BlockSvg.prototype.setInsertionMarker = function(insertionMarker) {
 
 /**
  * Return the root node of the SVG or null if none exists.
- * @return {SVGElement} The root SVG node (probably a group).
+ * @return {Element} The root SVG node (probably a group).
  */
 Blockly.BlockSvg.prototype.getSvgRoot = function() {
   return this.svgGroup_;
@@ -1172,7 +1103,7 @@ Blockly.BlockSvg.prototype.setCommentText = function(text) {
   if (this.rendered) {
     this.render();
     // Adding or removing a comment icon will cause the block to change shape.
-    this.bumpNeighbours();
+    this.bumpNeighbours_();
   }
 };
 
@@ -1255,7 +1186,7 @@ Blockly.BlockSvg.prototype.setWarningText = function(text, opt_id) {
   if (changedState && this.rendered) {
     this.render();
     // Adding or removing a warning icon will cause the block to change shape.
-    this.bumpNeighbours();
+    this.bumpNeighbours_();
   }
 };
 
@@ -1375,12 +1306,7 @@ Blockly.BlockSvg.prototype.bringToFront = function() {
   var block = this;
   do {
     var root = block.getSvgRoot();
-    var parent = root.parentNode;
-    var childNodes = parent.childNodes;
-    // Avoid moving the block if it's already at the bottom.
-    if (childNodes[childNodes.length - 1] !== root) {
-      parent.appendChild(root);
-    }
+    root.parentNode.appendChild(root);
     block = block.getParent();
   } while (block);
 };
@@ -1398,7 +1324,7 @@ Blockly.BlockSvg.prototype.setPreviousStatement = function(newBoolean,
 
   if (this.rendered) {
     this.render();
-    this.bumpNeighbours();
+    this.bumpNeighbours_();
   }
 };
 
@@ -1414,7 +1340,7 @@ Blockly.BlockSvg.prototype.setNextStatement = function(newBoolean, opt_check) {
 
   if (this.rendered) {
     this.render();
-    this.bumpNeighbours();
+    this.bumpNeighbours_();
   }
 };
 
@@ -1430,7 +1356,7 @@ Blockly.BlockSvg.prototype.setOutput = function(newBoolean, opt_check) {
 
   if (this.rendered) {
     this.render();
-    this.bumpNeighbours();
+    this.bumpNeighbours_();
   }
 };
 
@@ -1443,7 +1369,7 @@ Blockly.BlockSvg.prototype.setInputsInline = function(newBoolean) {
 
   if (this.rendered) {
     this.render();
-    this.bumpNeighbours();
+    this.bumpNeighbours_();
   }
 };
 
@@ -1460,7 +1386,7 @@ Blockly.BlockSvg.prototype.removeInput = function(name, opt_quiet) {
   if (this.rendered) {
     this.render();
     // Removing an input will cause the block to change shape.
-    this.bumpNeighbours();
+    this.bumpNeighbours_();
   }
 };
 
@@ -1477,7 +1403,7 @@ Blockly.BlockSvg.prototype.moveNumberedInputBefore = function(
   if (this.rendered) {
     this.render();
     // Moving an input will cause the block to change shape.
-    this.bumpNeighbours();
+    this.bumpNeighbours_();
   }
 };
 
@@ -1496,67 +1422,9 @@ Blockly.BlockSvg.prototype.appendInput_ = function(type, name) {
   if (this.rendered) {
     this.render();
     // Adding an input will cause the block to change shape.
-    this.bumpNeighbours();
+    this.bumpNeighbours_();
   }
   return input;
-};
-
-/**
- * Tell the block to wait for an outside source to call
- * startTrackingConnections, rather than starting connection
- * tracking automatically.
- *
- * Also tells children of this block to wait.
- * @package
- */
-Blockly.BlockSvg.prototype.waitToTrackConnections = function() {
-  this.callTrackConnections_ = false;
-  var children = this.getChildren();
-  for (var i = 0, child; child = children[i]; i++) {
-    child.waitToTrackConnections();
-  }
-};
-
-/**
- * Tell this block's connections to add themselves to the connection
- * database (i.e. start tracking).
- *
- * All following/next blocks will be told to start tracking. Inner blocks
- * (i.e. blocks attached to value/statement inputs) will be told to start
- * tracking if this block is not collapsed.
- * @package
- */
-Blockly.BlockSvg.prototype.startTrackingConnections = function() {
-  if (this.previousConnection) {
-    this.previousConnection.setTracking(true);
-  }
-  if (this.outputConnection) {
-    this.outputConnection.setTracking(true);
-  }
-  if (this.nextConnection) {
-    this.nextConnection.setTracking(true);
-    var child = this.nextConnection.targetBlock();
-    if (child) {
-      child.startTrackingConnections();
-    }
-  }
-
-  if (this.collapsed_) {
-    return;
-  }
-
-  for (var i = 0; i < this.inputList.length; i++) {
-    var conn = this.inputList[i].connection;
-    if (conn) {
-      conn.setTracking(true);
-
-      // Pass tracking on down the chain.
-      var block = conn.targetBlock();
-      if (block) {
-        block.startTrackingConnections();
-      }
-    }
-  }
 };
 
 /**
@@ -1603,8 +1471,9 @@ Blockly.BlockSvg.prototype.makeConnection_ = function(type) {
 /**
  * Bump unconnected blocks out of alignment.  Two blocks which aren't actually
  * connected should not coincidentally line up on screen.
+ * @private
  */
-Blockly.BlockSvg.prototype.bumpNeighbours = function() {
+Blockly.BlockSvg.prototype.bumpNeighbours_ = function() {
   if (!this.workspace) {
     return;  // Deleted block.
   }
@@ -1621,7 +1490,7 @@ Blockly.BlockSvg.prototype.bumpNeighbours = function() {
 
     // Spider down from this block bumping all sub-blocks.
     if (connection.isConnected() && connection.isSuperior()) {
-      connection.targetBlock().bumpNeighbours();
+      connection.targetBlock().bumpNeighbours_();
     }
 
     var neighbours = connection.neighbours_(Blockly.SNAP_RADIUS);
@@ -1663,7 +1532,7 @@ Blockly.BlockSvg.prototype.scheduleSnapAndBump = function() {
 
   setTimeout(function() {
     Blockly.Events.setGroup(group);
-    block.bumpNeighbours();
+    block.bumpNeighbours_();
     Blockly.Events.setGroup(false);
   }, Blockly.BUMP_DELAY);
 };
@@ -1702,13 +1571,6 @@ Blockly.BlockSvg.prototype.render = function(opt_bubble) {
   (/** @type {!Blockly.WorkspaceSvg} */ (this.workspace)).getRenderer().render(this);
   // No matter how we rendered, connection locations should now be correct.
   this.updateConnectionLocations_();
-  // TODO: This should be handled inside a robust init method, because it would
-  //  make it a lot cleaner, but for now it's handled here for backwards
-  //  compatibility.
-  if (this.callTrackConnections_) {
-    this.startTrackingConnections();
-    this.callTrackConnections_ = false;
-  }
   if (opt_bubble !== false) {
     // Render all blocks above this one (propagate a reflow).
     var parentBlock = this.getParent();
@@ -1791,68 +1653,4 @@ Blockly.BlockSvg.prototype.setMarkerSvg = function(markerSvg) {
     this.svgGroup_.appendChild(markerSvg);
   }
   this.markerSvg_ = markerSvg;
-};
-
-/**
- * Returns a bounding box describing the dimensions of this block
- * and any blocks stacked below it.
- * @return {!{height: number, width: number}} Object with height and width
- *    properties in workspace units.
- * @package
- */
-Blockly.BlockSvg.prototype.getHeightWidth = function() {
-  var height = this.height;
-  var width = this.width;
-  // Recursively add size of subsequent blocks.
-  var nextBlock = this.getNextBlock();
-  if (nextBlock) {
-    var nextHeightWidth = nextBlock.getHeightWidth();
-    var workspace = /** @type {!Blockly.WorkspaceSvg} */ (this.workspace);
-    var tabHeight = workspace.getRenderer().getConstants().NOTCH_HEIGHT;
-    height += nextHeightWidth.height - tabHeight;
-    width = Math.max(width, nextHeightWidth.width);
-  }
-  return {height: height, width: width};
-};
-
-/**
- * Position a new block correctly, so that it doesn't move the existing block
- * when connected to it.
- * @param {!Blockly.Block} newBlock The block to position - either the first
- *     block in a dragged stack or an insertion marker.
- * @param {!Blockly.Connection} newConnection The connection on the new block's
- *     stack - either a connection on newBlock, or the last NEXT_STATEMENT
- *     connection on the stack if the stack's being dropped before another
- *     block.
- * @param {!Blockly.Connection} existingConnection The connection on the
- *     existing block, which newBlock should line up with.
- * @package
- */
-Blockly.BlockSvg.prototype.positionNewBlock = function(newBlock, newConnection,
-    existingConnection) {
-  // We only need to position the new block if it's before the existing one,
-  // otherwise its position is set by the previous block.
-  if (newConnection.type == Blockly.NEXT_STATEMENT ||
-      newConnection.type == Blockly.INPUT_VALUE) {
-    var dx = existingConnection.x_ - newConnection.x_;
-    var dy = existingConnection.y_ - newConnection.y_;
-
-    newBlock.moveBy(dx, dy);
-  }
-};
-
-/**
- * Visual effect to show that if the dragging block is dropped, this block will
- * be replaced.  If a shadow block, it will disappear.  Otherwise it will bump.
- * @param {boolean} add True if highlighting should be added.
- * @package
- */
-Blockly.BlockSvg.prototype.highlightForReplacement = function(add) {
-  if (add) {
-    Blockly.utils.dom.addClass(/** @type {!Element} */ (this.svgGroup_),
-        'blocklyReplaceable');
-  } else {
-    Blockly.utils.dom.removeClass(/** @type {!Element} */ (this.svgGroup_),
-        'blocklyReplaceable');
-  }
 };

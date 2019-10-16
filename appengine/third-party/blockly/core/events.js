@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2016 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2016 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -195,9 +198,6 @@ Blockly.Events.fireNow_ = function() {
   var queue = Blockly.Events.filter(Blockly.Events.FIRE_QUEUE_, true);
   Blockly.Events.FIRE_QUEUE_.length = 0;
   for (var i = 0, event; event = queue[i]; i++) {
-    if (!event.workspaceId) {
-      continue;
-    }
     var workspace = Blockly.Workspace.getById(event.workspaceId);
     if (workspace) {
       workspace.fireChangeListener(event);
@@ -333,9 +333,9 @@ Blockly.Events.setGroup = function(state) {
  * Compute a list of the IDs of the specified block and all its descendants.
  * @param {!Blockly.Block} block The root block.
  * @return {!Array.<string>} List of block IDs.
- * @package
+ * @private
  */
-Blockly.Events.getDescendantIds = function(block) {
+Blockly.Events.getDescendantIds_ = function(block) {
   var ids = [];
   var descendants = block.getDescendants(false);
   for (var i = 0, descendant; descendant = descendants[i]; i++) {
@@ -376,13 +376,13 @@ Blockly.Events.fromJson = function(json, workspace) {
       event = new Blockly.Events.VarRename(null, '');
       break;
     case Blockly.Events.UI:
-      event = new Blockly.Events.Ui(null, '', '', '');
+      event = new Blockly.Events.Ui(null);
       break;
     case Blockly.Events.COMMENT_CREATE:
       event = new Blockly.Events.CommentCreate(null);
       break;
     case Blockly.Events.COMMENT_CHANGE:
-      event = new Blockly.Events.CommentChange(null, '', '');
+      event = new Blockly.Events.CommentChange(null);
       break;
     case Blockly.Events.COMMENT_MOVE:
       event = new Blockly.Events.CommentMove(null);
@@ -408,9 +408,6 @@ Blockly.Events.fromJson = function(json, workspace) {
 Blockly.Events.disableOrphans = function(event) {
   if (event.type == Blockly.Events.MOVE ||
       event.type == Blockly.Events.CREATE) {
-    if (!event.workspaceId) {
-      return;
-    }
     var workspace = Blockly.Workspace.getById(event.workspaceId);
     var block = workspace.getBlockById(event.blockId);
     if (block) {

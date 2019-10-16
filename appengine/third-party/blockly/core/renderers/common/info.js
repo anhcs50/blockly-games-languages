@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2019 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2019 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +43,7 @@ goog.require('Blockly.blockRendering.StatementInput');
 goog.require('Blockly.blockRendering.SquareCorner');
 goog.require('Blockly.blockRendering.TopRow');
 goog.require('Blockly.blockRendering.Types');
+goog.require('Blockly.RenderedConnection');
 
 
 /**
@@ -241,7 +245,7 @@ Blockly.blockRendering.RenderInfo.prototype.createRows_ = function() {
         new Blockly.blockRendering.JaggedEdge(this.constants_));
   }
 
-  if (activeRow.elements.length || activeRow.hasDummyInput) {
+  if (activeRow.elements.length) {
     this.rows.push(activeRow);
   }
   this.populateBottomRow_();
@@ -435,31 +439,15 @@ Blockly.blockRendering.RenderInfo.prototype.getInRowSpacing_ = function(prev, ne
     }
   }
 
-  // Spacing between a square corner and a previous or next connection
-  if (prev && Blockly.blockRendering.Types.isLeftSquareCorner(prev) && next) {
-    if (Blockly.blockRendering.Types.isPreviousConnection(next) ||
-        Blockly.blockRendering.Types.isNextConnection(next)) {
-      return next.notchOffset;
-    }
-  }
-
-  // Spacing between a rounded corner and a previous or next connection.
-  if (prev && Blockly.blockRendering.Types.isLeftRoundedCorner(prev) && next) {
-    if (Blockly.blockRendering.Types.isPreviousConnection(next) ||
-      Blockly.blockRendering.Types.isNextConnection(next)) {
-      return next.notchOffset - this.constants_.CORNER_RADIUS;
-    }
-  }
-
   return this.constants_.MEDIUM_PADDING;
 };
 
 /**
  * Figure out where the right edge of the block and right edge of statement inputs
  * should be placed.
+ * TODO: More cleanup.
  * @protected
  */
-// TODO: More cleanup.
 Blockly.blockRendering.RenderInfo.prototype.computeBounds_ = function() {
   var widestStatementRowFields = 0;
   var blockWidth = 0;
@@ -476,7 +464,9 @@ Blockly.blockRendering.RenderInfo.prototype.computeBounds_ = function() {
         Math.max(widestRowWithConnectedBlocks, row.widthWithConnectedBlocks);
   }
 
+
   this.statementEdge = widestStatementRowFields;
+
   this.width = blockWidth;
 
   for (var i = 0, row; (row = this.rows[i]); i++) {
@@ -623,50 +613,16 @@ Blockly.blockRendering.RenderInfo.prototype.getSpacerRowHeight_ = function(
  * vertically, with no special cases.  You will likely need extra logic to
  * handle (at minimum) top and bottom rows.
  * @param {!Blockly.blockRendering.Row} row The row containing the element.
- * @param {!Blockly.blockRendering.Measurable} elem The element to place.
+ * @param {!Blockly.blockRendering.Measurable} _elem The element to place.
  * @return {number} The desired centerline of the given element, as an offset
  *     from the top left of the block.
  * @protected
  */
 Blockly.blockRendering.RenderInfo.prototype.getElemCenterline_ = function(row,
-    elem) {
-  if (Blockly.blockRendering.Types.isSpacer(elem)) {
-    return row.yPos + elem.height / 2;
-  }
-  if (Blockly.blockRendering.Types.isBottomRow(row)) {
-    var baseline = row.yPos + row.height - row.descenderHeight;
-    if (Blockly.blockRendering.Types.isNextConnection(elem)) {
-      return baseline + elem.height / 2;
-    }
-    return baseline - elem.height / 2;
-  }
-  if (Blockly.blockRendering.Types.isTopRow(row)) {
-    if (Blockly.blockRendering.Types.isHat(elem)) {
-      return row.capline - elem.height / 2;
-    }
-    return row.capline + elem.height / 2;
-  }
-  return row.yPos + row.height / 2;
-};
-
-/**
- * Record final position information on elements on the given row, for use in
- * drawing.  At minimum this records xPos and centerline on each element.
- * @param {!Blockly.blockRendering.Row} row The row containing the elements.
- * @private
- */
-Blockly.blockRendering.RenderInfo.prototype.recordElemPositions_ = function(
-    row) {
-  var xCursor = row.xPos;
-  for (var j = 0, elem; (elem = row.elements[j]); j++) {
-    // Now that row heights are finalized, make spacers use the row height.
-    if (Blockly.blockRendering.Types.isSpacer(elem)) {
-      elem.height = row.height;
-    }
-    elem.xPos = xCursor;
-    elem.centerline = this.getElemCenterline_(row, elem);
-    xCursor += elem.width;
-  }
+    _elem) {
+  var result = row.yPos;
+  result += (row.height / 2);
+  return result;
 };
 
 /**
@@ -687,7 +643,12 @@ Blockly.blockRendering.RenderInfo.prototype.finalize_ = function() {
 
     widestRowWithConnectedBlocks =
         Math.max(widestRowWithConnectedBlocks, row.widthWithConnectedBlocks);
-    this.recordElemPositions_(row);
+    var xCursor = row.xPos;
+    for (var j = 0, elem; (elem = row.elements[j]); j++) {
+      elem.xPos = xCursor;
+      elem.centerline = this.getElemCenterline_(row, elem);
+      xCursor += elem.width;
+    }
   }
 
   this.widthWithChildren = widestRowWithConnectedBlocks + this.startX;

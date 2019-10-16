@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2019 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2019 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +33,7 @@ goog.require('Blockly.utils.object');
 
 /**
  * Holds the serialized key to key action mapping.
- * @type {!Object<string, Blockly.Action>}
+ * @type {Object<string, Blockly.Action>}
  */
 Blockly.user.keyMap.map_ = {};
 
@@ -63,7 +66,7 @@ Blockly.user.keyMap.setActionForKey = function(keyCode, action) {
 
 /**
  * Creates a new key map.
- * @param {!Object<string, Blockly.Action>} keyMap The object holding the key
+ * @param {Object<string, Blockly.Action>} keyMap The object holding the key
  *     to action mapping.
  * @package
  */
@@ -78,9 +81,7 @@ Blockly.user.keyMap.setKeyMap = function(keyMap) {
  * @package
  */
 Blockly.user.keyMap.getKeyMap = function() {
-  var map = {};
-  Blockly.utils.object.mixin(map, Blockly.user.keyMap.map_);
-  return map;
+  return Object.assign({}, Blockly.user.keyMap.map_);
 };
 
 /**

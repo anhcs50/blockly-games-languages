@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2018 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2018 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +31,7 @@ goog.require('Blockly.Events');
 goog.require('Blockly.Events.CommentMove');
 goog.require('Blockly.utils');
 goog.require('Blockly.utils.Coordinate');
+goog.require('Blockly.WorkspaceCommentSvg');
 
 
 /**
@@ -178,12 +182,12 @@ Blockly.BubbleDragger.prototype.updateCursorDuringBubbleDrag_ = function() {
   if (this.wouldDeleteBubble_) {
     this.draggingBubble_.setDeleteStyle(true);
     if (this.deleteArea_ == Blockly.DELETE_AREA_TRASH && trashcan) {
-      trashcan.setOpen(true);
+      trashcan.setOpen_(true);
     }
   } else {
     this.draggingBubble_.setDeleteStyle(false);
     if (trashcan) {
-      trashcan.setOpen(false);
+      trashcan.setOpen_(false);
     }
   }
 };
@@ -218,10 +222,10 @@ Blockly.BubbleDragger.prototype.endBubbleDrag = function(
   }
   this.workspace_.setResizesEnabled(true);
 
-  if (this.workspace_.getToolbox()) {
+  if (this.workspace_.toolbox_) {
     var style = this.draggingBubble_.isDeletable() ? 'blocklyToolboxDelete' :
         'blocklyToolboxGrab';
-    this.workspace_.getToolbox().removeStyle(style);
+    this.workspace_.toolbox_.removeStyle(style);
   }
   Blockly.Events.setGroup(false);
 };
@@ -232,8 +236,7 @@ Blockly.BubbleDragger.prototype.endBubbleDrag = function(
  */
 Blockly.BubbleDragger.prototype.fireMoveEvent_ = function() {
   if (this.draggingBubble_.isComment) {
-    var event = new Blockly.Events.CommentMove(
-        /** @type {!Blockly.WorkspaceCommentSvg} */ (this.draggingBubble_));
+    var event = new Blockly.Events.CommentMove(this.draggingBubble_);
     event.setOldCoordinate(this.startXY_);
     event.recordNew();
     Blockly.Events.fire(event);

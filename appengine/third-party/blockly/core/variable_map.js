@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2017 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2017 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -157,7 +160,7 @@ Blockly.VariableMap.prototype.renameVariableWithConflict_ = function(variable,
 
 };
 
-/* End functions for renaming variables. */
+/* End functions for renaming variabless. */
 
 /**
  * Create a variable with a given name, optional type, and optional ID.

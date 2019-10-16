@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2019 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2019 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +54,7 @@ Blockly.Events.FinishedLoading = function(workspace) {
    * perspective, and should be undone together.
    * @type {string}
    */
-  this.group = Blockly.Events.getGroup();
+  this.group = Blockly.Events.group_;
 
   // Workspace events do not undo or redo.
   this.recordUndo = false;

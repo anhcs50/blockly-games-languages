@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2012 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2012 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,7 +121,7 @@ Blockly.Mutator.prototype.iconClick_ = function(e) {
 
 /**
  * Create the editor for the mutator's bubble.
- * @return {!SVGElement} The top-level node of the editor.
+ * @return {!Element} The top-level node of the editor.
  * @private
  */
 Blockly.Mutator.prototype.createEditor_ = function() {
@@ -154,8 +157,7 @@ Blockly.Mutator.prototype.createEditor_ = function() {
         Blockly.TOOLBOX_AT_LEFT,
     horizontalLayout: false,
     getMetrics: this.getFlyoutMetrics_.bind(this),
-    setMetrics: null,
-    renderer: this.block_.workspace.options.renderer
+    setMetrics: null
   };
   this.workspace_ = new Blockly.WorkspaceSvg(workspaceOptions);
   this.workspace_.isMutator = true;
@@ -202,7 +204,8 @@ Blockly.Mutator.prototype.updateEditable = function() {
 };
 
 /**
- * Resize the bubble to match the size of the workspace.
+ * Callback function triggered when the bubble has resized.
+ * Resize the workspace accordingly.
  * @private
  */
 Blockly.Mutator.prototype.resizeBubble_ = function() {
@@ -293,7 +296,6 @@ Blockly.Mutator.prototype.setVisible = function(visible) {
       };
       this.block_.workspace.addChangeListener(this.sourceListener_);
     }
-    this.resizeBubble_();
     // When the mutator's workspace changes, update the source block.
     this.workspace_.addChangeListener(this.workspaceChanged_.bind(this));
     this.updateColour();
@@ -364,7 +366,7 @@ Blockly.Mutator.prototype.workspaceChanged_ = function(e) {
       var group = Blockly.Events.getGroup();
       setTimeout(function() {
         Blockly.Events.setGroup(group);
-        block.bumpNeighbours();
+        block.bumpNeighbours_();
         Blockly.Events.setGroup(false);
       }, Blockly.BUMP_DELAY);
     }
@@ -420,14 +422,14 @@ Blockly.Mutator.prototype.dispose = function() {
 Blockly.Mutator.prototype.updateBlockStyle = function() {
   var ws = this.workspace_;
 
-  if (ws && ws.getAllBlocks(false)) {
-    var workspaceBlocks = ws.getAllBlocks(false);
+  if (ws && ws.getAllBlocks()) {
+    var workspaceBlocks = ws.getAllBlocks();
     for (var i = 0; i < workspaceBlocks.length; i++) {
       var block = workspaceBlocks[i];
       block.setStyle(block.getStyleName());
     }
 
-    var flyoutBlocks = ws.flyout_.workspace_.getAllBlocks(false);
+    var flyoutBlocks = ws.flyout_.workspace_.getAllBlocks();
     for (var i = 0; i < flyoutBlocks.length; i++) {
       var block = flyoutBlocks[i];
       block.setStyle(block.getStyleName());

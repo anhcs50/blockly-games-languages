@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2017 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2017 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +28,7 @@ goog.provide('Blockly.InsertionMarkerManager');
 
 goog.require('Blockly.blockAnimations');
 goog.require('Blockly.Events');
+goog.require('Blockly.RenderedConnection');
 
 
 /**
@@ -146,19 +150,27 @@ Blockly.InsertionMarkerManager = function(block) {
  * @package
  */
 Blockly.InsertionMarkerManager.prototype.dispose = function() {
+  this.topBlock_ = null;
+  this.workspace_ = null;
   this.availableConnections_.length = 0;
+  this.closestConnection_ = null;
+  this.localConnection_ = null;
 
   Blockly.Events.disable();
   try {
     if (this.firstMarker_) {
       this.firstMarker_.dispose();
+      this.firstMarker_ = null;
     }
     if (this.lastMarker_) {
       this.lastMarker_.dispose();
+      this.lastMarker_ = null;
     }
   } finally {
     Blockly.Events.enable();
   }
+
+  this.highlightedBlock_ = null;
 };
 
 /**
@@ -233,6 +245,8 @@ Blockly.InsertionMarkerManager.prototype.update = function(dxy, deleteArea) {
   }
 };
 
+/**** Begin initialization functions ****/
+
 /**
  * Create an insertion marker that represents the given block.
  * @param {!Blockly.BlockSvg} sourceBlock The block that the insertion marker
@@ -297,6 +311,9 @@ Blockly.InsertionMarkerManager.prototype.initAvailableConnections_ = function() 
   }
   return available;
 };
+
+/**** End initialization functions ****/
+
 
 /**
  * Whether the previews (insertion marker and replacement marker) should be
@@ -457,6 +474,8 @@ Blockly.InsertionMarkerManager.prototype.shouldDelete_ = function(candidate,
   return wouldDelete && !wouldConnect;
 };
 
+/**** Begin preview visibility functions ****/
+
 /**
  * Show an insertion marker or replacement highlighting during a drag, if
  * needed.
@@ -482,7 +501,7 @@ Blockly.InsertionMarkerManager.prototype.maybeShowPreview_ = function(candidate)
   // Something went wrong and we're trying to connect to an invalid connection.
   if (closest == this.closestConnection_ ||
       closest.sourceBlock_.isInsertionMarker()) {
-    console.log('Trying to connect to an insertion marker');
+    console.log("trying to connect to an insertion marker");
     return;
   }
   // Add an insertion marker or replacement marker.
@@ -557,6 +576,10 @@ Blockly.InsertionMarkerManager.prototype.hidePreview_ = function() {
   }
 };
 
+/**** End preview visibility functions ****/
+
+/**** Begin block highlighting functions ****/
+
 /**
  * Add highlighting showing which block will be replaced.
  */
@@ -589,6 +612,10 @@ Blockly.InsertionMarkerManager.prototype.unhighlightBlock_ = function() {
   this.highlightedBlock_ = null;
   this.highlightingBlock_ = false;
 };
+
+/**** End block highlighting functions ****/
+
+/**** Begin insertion marker display functions ****/
 
 /**
  * Disconnect the insertion marker block in a manner that returns the stack to
@@ -672,6 +699,8 @@ Blockly.InsertionMarkerManager.prototype.connectMarker_ = function() {
   imConn.connect(closest);
   this.markerConnection_ = imConn;
 };
+
+/**** End insertion marker display functions ****/
 
 /**
  * Get a list of the insertion markers that currently exist.  Drags have 0, 1,

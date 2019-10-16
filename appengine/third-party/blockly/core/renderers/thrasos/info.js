@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2019 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2019 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +42,7 @@ goog.require('Blockly.blockRendering.SpacerRow');
 goog.require('Blockly.blockRendering.StatementInput');
 goog.require('Blockly.blockRendering.TopRow');
 goog.require('Blockly.blockRendering.Types');
+goog.require('Blockly.RenderedConnection');
 goog.require('Blockly.utils.object');
 
 
@@ -267,9 +271,6 @@ Blockly.thrasos.RenderInfo.prototype.getSpacerRowHeight_ = function(
  * @override
  */
 Blockly.thrasos.RenderInfo.prototype.getElemCenterline_ = function(row, elem) {
-  if (Blockly.blockRendering.Types.isSpacer(elem)) {
-    return row.yPos + elem.height / 2;
-  }
   if (Blockly.blockRendering.Types.isBottomRow(row)) {
     var baseline = row.yPos + row.height - row.descenderHeight;
     if (Blockly.blockRendering.Types.isNextConnection(elem)) {
@@ -320,7 +321,12 @@ Blockly.thrasos.RenderInfo.prototype.finalize_ = function() {
       this.bottomRow.height += diff;
       yCursor += diff;
     }
-    this.recordElemPositions_(row);
+    var xCursor = row.xPos;
+    for (var j = 0, elem; (elem = row.elements[j]); j++) {
+      elem.xPos = xCursor;
+      elem.centerline = this.getElemCenterline_(row, elem);
+      xCursor += elem.width;
+    }
   }
 
   this.bottomRow.baseline = yCursor - this.bottomRow.descenderHeight;

@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2019 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2019 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +27,7 @@
 goog.provide('Blockly.blockRendering.Renderer');
 
 goog.require('Blockly.blockRendering.ConstantProvider');
+goog.require('Blockly.blockRendering.Debug');
 goog.require('Blockly.blockRendering.Drawer');
 goog.require('Blockly.blockRendering.IPathObject');
 goog.require('Blockly.blockRendering.PathObject');
@@ -37,7 +41,7 @@ goog.require('Blockly.CursorSvg');
  * @constructor
  */
 Blockly.blockRendering.Renderer = function() {
-
+  
   /**
    * The renderer's constant provider.
    * @type {Blockly.blockRendering.ConstantProvider}
@@ -92,9 +96,6 @@ Blockly.blockRendering.Renderer.prototype.makeDrawer_ = function(block, info) {
  * @protected
  */
 Blockly.blockRendering.Renderer.prototype.makeDebugger_ = function() {
-  if (!Blockly.blockRendering.Debug) {
-    throw Error('Missing require for Blockly.blockRendering.Debug');
-  }
   return new Blockly.blockRendering.Debug();
 };
 
@@ -140,7 +141,7 @@ Blockly.blockRendering.Renderer.prototype.getConstants = function() {
  * @package
  */
 Blockly.blockRendering.Renderer.prototype.render = function(block) {
-  if (Blockly.blockRendering.useDebugger && !block.renderingDebugger) {
+  if (!block.renderingDebugger) {
     block.renderingDebugger = this.makeDebugger_();
   }
   var info = this.makeRenderInfo_(block);

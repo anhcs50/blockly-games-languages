@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2012 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2012 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -574,7 +577,7 @@ Blockly.Constants.Logic.LOGIC_COMPARE_ONCHANGE_MIXIN = {
           this.getInput('B').connection.connect(prevB.outputConnection);
         }
       }
-      this.bumpNeighbours();
+      this.bumpNeighbours_();
       Blockly.Events.setGroup(false);
     }
     this.prevBlocks_[0] = this.getInputTargetBlock('A');
@@ -626,10 +629,10 @@ Blockly.Constants.Logic.LOGIC_TERNARY_ONCHANGE_MIXIN = {
           Blockly.Events.setGroup(e.group);
           if (parentConnection === this.prevParentConnection_) {
             this.unplug();
-            parentConnection.getSourceBlock().bumpNeighbours();
+            parentConnection.getSourceBlock().bumpNeighbours_();
           } else {
             block.unplug();
-            block.bumpNeighbours();
+            block.bumpNeighbours_();
           }
           Blockly.Events.setGroup(false);
         }

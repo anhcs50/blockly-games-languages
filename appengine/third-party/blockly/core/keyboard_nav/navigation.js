@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2019 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2019 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,29 +89,69 @@ Blockly.navigation.actionNames = {
   TOGGLE_KEYBOARD_NAV: 'toggle_keyboard_nav'
 };
 
-/** ****** */
-/** Focus  */
-/** ****** */
+/**
+ * Move the marker to the cursor's current location.
+ * @private
+ */
+Blockly.navigation.markAtCursor_ = function() {
+  Blockly.getMainWorkspace().getMarker().setCurNode(
+      Blockly.getMainWorkspace().getCursor().getCurNode());
+};
 
 /**
- * If a toolbox exists, set the navigation state to toolbox and select the first
- * category in the toolbox.
+ * Remove the marker from its current location and hide it.
+ * @private
+ */
+Blockly.navigation.removeMark_ = function() {
+  Blockly.getMainWorkspace().getMarker().setCurNode(null);
+  Blockly.getMainWorkspace().getMarker().hide();
+};
+
+/**
+ * Gets the top node on a block.
+ * This is either the previous connection, output connection or the block.
+ * @param {Blockly.Block} block The block to find the top most AST node on.
+ * @return {Blockly.ASTNode} The AST node holding the top most node on the
+ *     block.
+ * @package
+ */
+Blockly.navigation.getTopNode = function(block) {
+  var prevConnection = block.previousConnection;
+  var outConnection = block.outputConnection;
+  var topConnection = prevConnection ? prevConnection : outConnection;
+  var astNode = null;
+  if (topConnection) {
+    astNode = Blockly.ASTNode.createConnectionNode(topConnection);
+  } else {
+    astNode = Blockly.ASTNode.createBlockNode(block);
+  }
+  return astNode;
+};
+
+/************************/
+/** Toolbox Navigation **/
+/************************/
+
+/**
+ * Set the state to the toolbox state and the current category as the first
  * category.
  * @private
  */
 Blockly.navigation.focusToolbox_ = function() {
+  Blockly.navigation.resetFlyout_(false /* shouldHide */);
+  Blockly.navigation.currentState_ = Blockly.navigation.STATE_TOOLBOX;
   var workspace = Blockly.getMainWorkspace();
   var toolbox = workspace.getToolbox();
-  if (toolbox) {
-    Blockly.navigation.currentState_ = Blockly.navigation.STATE_TOOLBOX;
-    Blockly.navigation.resetFlyout_(false /* shouldHide */);
 
-    if (!workspace.getMarker().getCurNode()) {
-      Blockly.navigation.markAtCursor_();
-    }
-    toolbox.selectFirstCategory();
+  if (!Blockly.getMainWorkspace().getMarker().getCurNode()) {
+    Blockly.navigation.markAtCursor_();
   }
+  toolbox.selectFirstCategory();
 };
+
+/***********************/
+/** Flyout Navigation **/
+/***********************/
 
 /**
  * Change focus to the flyout.
@@ -121,7 +164,7 @@ Blockly.navigation.focusFlyout_ = function() {
   var toolbox = workspace.getToolbox();
   var flyout = toolbox ? toolbox.flyout_ : workspace.getFlyout();
 
-  if (!workspace.getMarker().getCurNode()) {
+  if (!Blockly.getMainWorkspace().getMarker().getCurNode()) {
     Blockly.navigation.markAtCursor_();
   }
 
@@ -134,34 +177,6 @@ Blockly.navigation.focusFlyout_ = function() {
     }
   }
 };
-
-/**
- * Finds where the cursor should go on the workspace. This is either the top
- * block or a set position on the workspace.
- * @private
- */
-Blockly.navigation.focusWorkspace_ = function() {
-  Blockly.hideChaff();
-  var workspace = Blockly.getMainWorkspace();
-  var cursor = workspace.getCursor();
-  var reset = !!workspace.getToolbox();
-  var topBlocks = workspace.getTopBlocks(true);
-
-  Blockly.navigation.resetFlyout_(reset);
-  Blockly.navigation.currentState_ = Blockly.navigation.STATE_WS;
-  if (topBlocks.length > 0) {
-    cursor.setCurNode(Blockly.navigation.getTopNode(topBlocks[0]));
-  } else {
-    // TODO: Find the center of the visible workspace.
-    var wsCoord = new Blockly.utils.Coordinate(100, 100);
-    var wsNode = Blockly.ASTNode.createWorkspaceNode(workspace, wsCoord);
-    cursor.setCurNode(wsNode);
-  }
-};
-
-/** ****************** */
-/** Flyout Navigation  */
-/** ****************** */
 
 /**
  * Get the cursor from the flyouts workspace.
@@ -185,8 +200,7 @@ Blockly.navigation.getFlyoutCursor_ = function() {
  * it on the workspace.
  */
 Blockly.navigation.insertFromFlyout = function() {
-  var workspace = Blockly.getMainWorkspace();
-  var flyout = workspace.getFlyout();
+  var flyout = Blockly.getMainWorkspace().getFlyout();
   if (!flyout || !flyout.isVisible()) {
     Blockly.navigation.warn_('Trying to insert from the flyout when the flyout does not ' +
       ' exist or is not visible');
@@ -205,15 +219,15 @@ Blockly.navigation.insertFromFlyout = function() {
   // Connections are hidden when the block is first created.  Normally there's
   // enough time for them to become unhidden in the user's mouse movements,
   // but not here.
-  newBlock.startTrackingConnections();
-  workspace.getCursor().setCurNode(
+  newBlock.setConnectionsHidden(false);
+  Blockly.getMainWorkspace().getCursor().setCurNode(
       Blockly.ASTNode.createBlockNode(newBlock));
   if (!Blockly.navigation.modify_()) {
     Blockly.navigation.warn_('Something went wrong while inserting a block from the flyout.');
   }
 
   Blockly.navigation.focusWorkspace_();
-  workspace.getCursor().setCurNode(Blockly.navigation.getTopNode(newBlock));
+  Blockly.getMainWorkspace().getCursor().setCurNode(Blockly.navigation.getTopNode(newBlock));
   Blockly.navigation.removeMark_();
 };
 
@@ -231,9 +245,9 @@ Blockly.navigation.resetFlyout_ = function(shouldHide) {
   }
 };
 
-/** **************** */
-/** Modify Workspace */
-/** **************** */
+/************/
+/** Modify **/
+/************/
 
 /**
  * Warns the user if the cursor or marker is on a type that can not be connected.
@@ -283,7 +297,7 @@ Blockly.navigation.modifyWarn_ = function() {
 /**
  * Disconnect the block from its parent and move to the position of the
  * workspace node.
- * @param {Blockly.Block} block The block to be moved to the workspace.
+ * @param {!Blockly.Block} block The block to be moved to the workspace.
  * @param {!Blockly.ASTNode} wsNode The workspace node holding the position the
  *     block will be moved to.
  * @return {boolean} True if the block can be moved to the workspace,
@@ -291,9 +305,6 @@ Blockly.navigation.modifyWarn_ = function() {
  * @private
  */
 Blockly.navigation.moveBlockToWorkspace_ = function(block, wsNode) {
-  if (!block) {
-    return false;
-  }
   if (block.isShadow()) {
     Blockly.navigation.warn_('Cannot move a shadow block to the workspace.');
     return false;
@@ -326,14 +337,10 @@ Blockly.navigation.modify_ = function() {
   var markerLoc = markerNode.getLocation();
 
   if (markerNode.isConnection() && cursorNode.isConnection()) {
-    cursorLoc = /** @type {!Blockly.Connection} */ (cursorLoc);
-    markerLoc = /** @type {!Blockly.Connection} */ (markerLoc);
     return Blockly.navigation.connect_(cursorLoc, markerLoc);
   } else if (markerNode.isConnection() &&
-      (cursorType == Blockly.ASTNode.types.BLOCK ||
-      cursorType == Blockly.ASTNode.types.STACK)) {
-    cursorLoc = /** @type {!Blockly.Block} */ (cursorLoc);
-    markerLoc = /** @type {!Blockly.Connection} */ (markerLoc);
+        (cursorType == Blockly.ASTNode.types.BLOCK ||
+        cursorType == Blockly.ASTNode.types.STACK)) {
     return Blockly.navigation.insertBlock(cursorLoc, markerLoc);
   } else if (markerType == Blockly.ASTNode.types.WORKSPACE) {
     var block = Blockly.navigation.getSourceBlock_(cursorNode);
@@ -374,12 +381,12 @@ Blockly.navigation.disconnectChild_ = function(movingConnection, destConnection)
  * @private
  */
 Blockly.navigation.moveAndConnect_ = function(movingConnection, destConnection) {
-  if (!movingConnection || !destConnection) {
+  if (!movingConnection || ! destConnection) {
     return false;
   }
   var movingBlock = movingConnection.getSourceBlock();
 
-  if (destConnection.canConnectWithReason(movingConnection) ==
+  if (destConnection.canConnectWithReason_(movingConnection) ==
       Blockly.Connection.CAN_CONNECT) {
 
     Blockly.navigation.disconnectChild_(movingConnection, destConnection);
@@ -465,7 +472,7 @@ Blockly.navigation.connect_ = function(movingConnection, destConnection) {
     return true;
   } else {
     try {
-      destConnection.checkConnection(movingConnection);
+      destConnection.checkConnection_(movingConnection);
     }
     catch (e) {
       // If nothing worked report the error from the original connections.
@@ -479,7 +486,7 @@ Blockly.navigation.connect_ = function(movingConnection, destConnection) {
  * Tries to connect the given block to the destination connection, making an
  * intelligent guess about which connection to use to on the moving block.
  * @param {!Blockly.Block} block The block to move.
- * @param {!Blockly.Connection} destConnection The connection to connect to.
+ * @param {Blockly.Connection} destConnection The connection to connect to.
  * @return {boolean} Whether the connection was successful.
  */
 Blockly.navigation.insertBlock = function(block, destConnection) {
@@ -502,16 +509,10 @@ Blockly.navigation.insertBlock = function(block, destConnection) {
     case Blockly.OUTPUT_VALUE:
       for (var i = 0; i < block.inputList.length; i++) {
         var inputConnection = block.inputList[i].connection;
-        if (inputConnection && inputConnection.type === Blockly.INPUT_VALUE &&
+        if (inputConnection.type === Blockly.INPUT_VALUE &&
             Blockly.navigation.connect_(inputConnection, destConnection)) {
           return true;
         }
-      }
-      // If there are no input values pass the output and destination connections
-      // to connect_ to find a way to connect the two.
-      if (block.outputConnection &&
-          Blockly.navigation.connect_(block.outputConnection, destConnection)) {
-        return true;
       }
       break;
   }
@@ -526,13 +527,12 @@ Blockly.navigation.insertBlock = function(block, destConnection) {
  * @private
  */
 Blockly.navigation.disconnectBlocks_ = function() {
-  var workspace = Blockly.getMainWorkspace();
-  var curNode = workspace.getCursor().getCurNode();
+  var curNode = Blockly.getMainWorkspace().getCursor().getCurNode();
   if (!curNode.isConnection()) {
     Blockly.navigation.log_('Cannot disconnect blocks when the cursor is not on a connection');
     return;
   }
-  var curConnection = /** @type {!Blockly.Connection} */ (curNode.getLocation());
+  var curConnection = curNode.getLocation();
   if (!curConnection.isConnected()) {
     Blockly.navigation.log_('Cannot disconnect unconnected connection');
     return;
@@ -554,40 +554,61 @@ Blockly.navigation.disconnectBlocks_ = function() {
   rootBlock.bringToFront();
 
   var connectionNode = Blockly.ASTNode.createConnectionNode(superiorConnection);
-  workspace.getCursor().setCurNode(connectionNode);
+  Blockly.getMainWorkspace().getCursor().setCurNode(connectionNode);
 };
 
-/** ***************** */
-/** Helper Functions  */
-/** ***************** */
+/*************************/
+/** Keyboard Navigation **/
+/*************************/
 
 /**
- * Move the marker to the cursor's current location.
+ * Finds where the cursor should go on the workspace. This is either the top
+ * block or a set position on the workspace.
  * @private
  */
-Blockly.navigation.markAtCursor_ = function() {
-  var workspace = Blockly.getMainWorkspace();
-  workspace.getMarker().setCurNode(workspace.getCursor().getCurNode());
+Blockly.navigation.focusWorkspace_ = function() {
+  Blockly.hideChaff();
+  var cursor = Blockly.getMainWorkspace().getCursor();
+  var reset = Blockly.getMainWorkspace().getToolbox() ? true : false;
+  var topBlocks = Blockly.getMainWorkspace().getTopBlocks(true);
+
+  Blockly.navigation.resetFlyout_(reset);
+  Blockly.navigation.currentState_ = Blockly.navigation.STATE_WS;
+  if (topBlocks.length > 0) {
+    cursor.setCurNode(Blockly.navigation.getTopNode(topBlocks[0]));
+  } else {
+    var ws = Blockly.getMainWorkspace();
+    // TODO: Find the center of the visible workspace.
+    var wsCoord = new Blockly.utils.Coordinate(100, 100);
+    var wsNode = Blockly.ASTNode.createWorkspaceNode(ws, wsCoord);
+    cursor.setCurNode(wsNode);
+  }
 };
 
 /**
- * Remove the marker from its current location and hide it.
+ * Handles hitting the enter key on the workspace.
  * @private
  */
-Blockly.navigation.removeMark_ = function() {
-  var workspace = Blockly.getMainWorkspace();
-  workspace.getMarker().setCurNode(null);
-  workspace.getMarker().hide();
+Blockly.navigation.handleEnterForWS_ = function() {
+  var cursor = Blockly.getMainWorkspace().getCursor();
+  var curNode = cursor.getCurNode();
+  var nodeType = curNode.getType();
+  if (nodeType === Blockly.ASTNode.types.FIELD) {
+    var location = curNode.getLocation();
+    location.showEditor_();
+  } else if (curNode.isConnection() ||
+      nodeType == Blockly.ASTNode.types.WORKSPACE) {
+    Blockly.navigation.markAtCursor_();
+  } else if (nodeType == Blockly.ASTNode.types.BLOCK) {
+    Blockly.navigation.warn_('Cannot mark a block.');
+  } else if (nodeType == Blockly.ASTNode.types.STACK) {
+    Blockly.navigation.warn_('Cannot mark a stack.');
+  }
 };
 
-/**
- * Set the current navigation state.
- * @param {number} newState The new navigation state.
- * @package
- */
-Blockly.navigation.setState = function(newState) {
-  Blockly.navigation.currentState_ = newState;
-};
+/**********************/
+/** Helper Functions **/
+/**********************/
 
 /**
  * Finds the source block of the location on a given node.
@@ -612,34 +633,14 @@ Blockly.navigation.getSourceBlock_ = function(node) {
 };
 
 /**
- * Gets the top node on a block.
- * This is either the previous connection, output connection or the block.
- * @param {!Blockly.Block} block The block to find the top most AST node on.
- * @return {Blockly.ASTNode} The AST node holding the top most node on the
- *     block.
- * @package
- */
-Blockly.navigation.getTopNode = function(block) {
-  var astNode;
-  var topConnection = block.previousConnection || block.outputConnection;
-  if (topConnection) {
-    astNode = Blockly.ASTNode.createConnectionNode(topConnection);
-  } else {
-    astNode = Blockly.ASTNode.createBlockNode(block);
-  }
-  return astNode;
-};
-
-/**
  * Before a block is deleted move the cursor to the appropriate position.
  * @param {!Blockly.Block} deletedBlock The block that is being deleted.
  */
 Blockly.navigation.moveCursorOnBlockDelete = function(deletedBlock) {
-  var workspace = Blockly.getMainWorkspace();
-  if (!workspace) {
+  if (!Blockly.getMainWorkspace()) {
     return;
   }
-  var cursor = workspace.getCursor();
+  var cursor = Blockly.getMainWorkspace().getCursor();
   if (cursor) {
     var curNode = cursor.getCurNode();
     var block = Blockly.navigation.getSourceBlock_(curNode);
@@ -647,7 +648,8 @@ Blockly.navigation.moveCursorOnBlockDelete = function(deletedBlock) {
     if (block === deletedBlock) {
       // If the block has a parent move the cursor to their connection point.
       if (block.getParent()) {
-        var topConnection = block.previousConnection || block.outputConnection;
+        var topConnection = block.previousConnection ?
+          block.previousConnection : block.outputConnection;
         if (topConnection) {
           cursor.setCurNode(
               Blockly.ASTNode.createConnectionNode(topConnection.targetConnection));
@@ -659,7 +661,7 @@ Blockly.navigation.moveCursorOnBlockDelete = function(deletedBlock) {
       }
     // If the cursor is on a block whose parent is being deleted, move the
     // cursor to the workspace.
-    } else if (block && deletedBlock.getChildren(false).indexOf(block) > -1) {
+    } else if (deletedBlock.getChildren(false).indexOf(block) > -1) {
       cursor.setCurNode(Blockly.ASTNode.createWorkspaceNode(block.workspace,
           block.getRelativeToSurfaceXY()));
     }
@@ -683,77 +685,6 @@ Blockly.navigation.moveCursorOnBlockMutation = function(mutatedBlock) {
     }
   }
 };
-
-/**
- * Enable accessibility mode.
- */
-Blockly.navigation.enableKeyboardAccessibility = function() {
-  if (!Blockly.keyboardAccessibilityMode) {
-    Blockly.keyboardAccessibilityMode = true;
-    Blockly.navigation.focusWorkspace_();
-  }
-};
-
-/**
- * Disable accessibility mode.
- */
-Blockly.navigation.disableKeyboardAccessibility = function() {
-  if (Blockly.keyboardAccessibilityMode) {
-    var workspace = Blockly.getMainWorkspace();
-    Blockly.keyboardAccessibilityMode = false;
-    workspace.getCursor().hide();
-    workspace.getMarker().hide();
-    if (Blockly.navigation.getFlyoutCursor_()) {
-      Blockly.navigation.getFlyoutCursor_().hide();
-    }
-  }
-};
-
-/**
- * Navigation log handler. If loggingCallback is defined, use it.
- * Otherwise just log to the console.
- * @param {string} msg The message to log.
- * @private
- */
-Blockly.navigation.log_ = function(msg) {
-  if (Blockly.navigation.loggingCallback) {
-    Blockly.navigation.loggingCallback('log', msg);
-  } else {
-    console.log(msg);
-  }
-};
-
-/**
- * Navigation warning handler. If loggingCallback is defined, use it.
- * Otherwise call Blockly.navigation.warn_.
- * @param {string} msg The warning message.
- * @private
- */
-Blockly.navigation.warn_ = function(msg) {
-  if (Blockly.navigation.loggingCallback) {
-    Blockly.navigation.loggingCallback('warn', msg);
-  } else {
-    console.warn(msg);
-  }
-};
-
-/**
- * Navigation error handler. If loggingCallback is defined, use it.
- * Otherwise call console.error.
- * @param {string} msg The error message.
- * @private
- */
-Blockly.navigation.error_ = function(msg) {
-  if (Blockly.navigation.loggingCallback) {
-    Blockly.navigation.loggingCallback('error', msg);
-  } else {
-    console.error(msg);
-  }
-};
-
-/** ***************** */
-/** Handle Key Press  */
-/** ***************** */
 
 /**
  * Handler for all the keyboard navigation events.
@@ -782,7 +713,13 @@ Blockly.navigation.onBlocklyAction = function(action) {
 
   if (Blockly.keyboardAccessibilityMode) {
     if (!readOnly) {
-      actionHandled = Blockly.navigation.handleActions_(action);
+      var curNode = Blockly.getMainWorkspace().getCursor().getCurNode();
+      if (curNode && curNode.getType() === Blockly.ASTNode.types.FIELD) {
+        actionHandled = curNode.getLocation().onBlocklyAction(action);
+      }
+      if (!actionHandled) {
+        actionHandled = Blockly.navigation.handleActions_(action);
+      }
     // If in readonly mode only handle valid actions.
     } else if (Blockly.navigation.READONLY_ACTION_LIST.indexOf(action) > -1) {
       actionHandled = Blockly.navigation.handleActions_(action);
@@ -802,27 +739,18 @@ Blockly.navigation.onBlocklyAction = function(action) {
  * @private
  */
 Blockly.navigation.handleActions_ = function(action) {
-  var workspace = Blockly.getMainWorkspace();
   if (action.name === Blockly.navigation.actionNames.TOGGLE_KEYBOARD_NAV) {
     Blockly.navigation.disableKeyboardAccessibility();
     return true;
   } else if (action.name === Blockly.navigation.actionNames.TOOLBOX) {
-    if (!workspace.getToolbox()) {
+    if (!Blockly.getMainWorkspace().getToolbox()) {
       Blockly.navigation.focusFlyout_();
     } else {
       Blockly.navigation.focusToolbox_();
     }
     return true;
   } else if (Blockly.navigation.currentState_ === Blockly.navigation.STATE_WS) {
-    var curNode = workspace.getCursor().getCurNode();
-    var actionHandled = false;
-    if (curNode && curNode.getType() === Blockly.ASTNode.types.FIELD) {
-      actionHandled = curNode.getLocation().onBlocklyAction(action);
-    }
-    if (!actionHandled) {
-      actionHandled = Blockly.navigation.workspaceOnAction_(action);
-    }
-    return actionHandled;
+    return Blockly.navigation.workspaceOnAction_(action);
   } else if (Blockly.navigation.currentState_ === Blockly.navigation.STATE_FLYOUT) {
     return Blockly.navigation.flyoutOnAction_(action);
   } else if (Blockly.navigation.currentState_ === Blockly.navigation.STATE_TOOLBOX) {
@@ -838,19 +766,18 @@ Blockly.navigation.handleActions_ = function(action) {
  * @private
  */
 Blockly.navigation.workspaceOnAction_ = function(action) {
-  var workspace = Blockly.getMainWorkspace();
   switch (action.name) {
     case Blockly.navigation.actionNames.PREVIOUS:
-      workspace.getCursor().prev();
+      Blockly.getMainWorkspace().getCursor().prev();
       return true;
     case Blockly.navigation.actionNames.OUT:
-      workspace.getCursor().out();
+      Blockly.getMainWorkspace().getCursor().out();
       return true;
     case Blockly.navigation.actionNames.NEXT:
-      workspace.getCursor().next();
+      Blockly.getMainWorkspace().getCursor().next();
       return true;
     case Blockly.navigation.actionNames.IN:
-      workspace.getCursor().in();
+      Blockly.getMainWorkspace().getCursor().in();
       return true;
     case Blockly.navigation.actionNames.INSERT:
       Blockly.navigation.modify_();
@@ -916,28 +843,70 @@ Blockly.navigation.toolboxOnAction_ = function(action) {
 };
 
 /**
- * Handles hitting the enter key on the workspace.
- * @private
+ * Enable accessibility mode.
  */
-Blockly.navigation.handleEnterForWS_ = function() {
-  var cursor = Blockly.getMainWorkspace().getCursor();
-  var curNode = cursor.getCurNode();
-  var nodeType = curNode.getType();
-  if (nodeType == Blockly.ASTNode.types.FIELD) {
-    curNode.getLocation().showEditor_();
-  } else if (curNode.isConnection() ||
-      nodeType == Blockly.ASTNode.types.WORKSPACE) {
-    Blockly.navigation.markAtCursor_();
-  } else if (nodeType == Blockly.ASTNode.types.BLOCK) {
-    Blockly.navigation.warn_('Cannot mark a block.');
-  } else if (nodeType == Blockly.ASTNode.types.STACK) {
-    Blockly.navigation.warn_('Cannot mark a stack.');
+Blockly.navigation.enableKeyboardAccessibility = function() {
+  if (!Blockly.keyboardAccessibilityMode) {
+    Blockly.keyboardAccessibilityMode = true;
+    Blockly.navigation.focusWorkspace_();
   }
 };
 
-/** ******************* */
-/** Navigation Actions  */
-/** ******************* */
+/**
+ * Disable accessibility mode.
+ */
+Blockly.navigation.disableKeyboardAccessibility = function() {
+  if (Blockly.keyboardAccessibilityMode) {
+    Blockly.keyboardAccessibilityMode = false;
+    Blockly.getMainWorkspace().getCursor().hide();
+    Blockly.getMainWorkspace().getMarker().hide();
+    if (Blockly.navigation.getFlyoutCursor_()) {
+      Blockly.navigation.getFlyoutCursor_().hide();
+    }
+  }
+};
+
+/**
+ * Navigation log handler. If loggingCallback is defined, use it.
+ * Otherwise just log to the console.
+ * @param {string} msg The message to log.
+ * @package
+ */
+Blockly.navigation.log_ = function(msg) {
+  if (Blockly.navigation.loggingCallback) {
+    Blockly.navigation.loggingCallback('log', msg);
+  } else {
+    console.log(msg);
+  }
+};
+
+/**
+ * Navigation warning handler. If loggingCallback is defined, use it.
+ * Otherwise call Blockly.navigation.warn_.
+ * @param {string} msg The warning message.
+ * @package
+ */
+Blockly.navigation.warn_ = function(msg) {
+  if (Blockly.navigation.loggingCallback) {
+    Blockly.navigation.loggingCallback('warn', msg);
+  } else {
+    console.warn(msg);
+  }
+};
+
+/**
+ * Navigation error handler. If loggingCallback is defined, use it.
+ * Otherwise call console.error.
+ * @param {string} msg The error message.
+ * @package
+ */
+Blockly.navigation.error_ = function(msg) {
+  if (Blockly.navigation.loggingCallback) {
+    Blockly.navigation.loggingCallback('error', msg);
+  } else {
+    console.error(msg);
+  }
+};
 
 /**
  * The previous action.
@@ -951,8 +920,7 @@ Blockly.navigation.ACTION_PREVIOUS = new Blockly.Action(
  * @type {!Blockly.Action}
  */
 Blockly.navigation.ACTION_OUT = new Blockly.Action(
-    Blockly.navigation.actionNames.OUT,
-    'Go to the parent of the current location.');
+    Blockly.navigation.actionNames.OUT, 'Go to the parent of the current location.');
 
 /**
  * The next action.
@@ -966,8 +934,7 @@ Blockly.navigation.ACTION_NEXT = new Blockly.Action(
  * @type {!Blockly.Action}
  */
 Blockly.navigation.ACTION_IN = new Blockly.Action(
-    Blockly.navigation.actionNames.IN,
-    'Go to the first child of the current location.');
+    Blockly.navigation.actionNames.IN, 'Go to the first child of the current location.');
 
 /**
  * The action to try to insert a block.
@@ -989,8 +956,8 @@ Blockly.navigation.ACTION_MARK = new Blockly.Action(
  * @type {!Blockly.Action}
  */
 Blockly.navigation.ACTION_DISCONNECT = new Blockly.Action(
-    Blockly.navigation.actionNames.DISCONNECT,
-    'Disconnect the block at the current location from its parent.');
+    Blockly.navigation.actionNames.DISCONNECT, 'Dicsonnect the block at the' +
+      'current location from its parent.');
 
 /**
  * The action to open the toolbox.
@@ -1004,16 +971,14 @@ Blockly.navigation.ACTION_TOOLBOX = new Blockly.Action(
  * @type {!Blockly.Action}
  */
 Blockly.navigation.ACTION_EXIT = new Blockly.Action(
-    Blockly.navigation.actionNames.EXIT,
-    'Close the current modal, such as a toolbox or field editor.');
+    Blockly.navigation.actionNames.EXIT, 'Close the current modal, such as a toolbox or field editor.');
 
 /**
  * The action to toggle keyboard navigation mode on and off.
  * @type {!Blockly.Action}
  */
 Blockly.navigation.ACTION_TOGGLE_KEYBOARD_NAV = new Blockly.Action(
-    Blockly.navigation.actionNames.TOGGLE_KEYBOARD_NAV,
-    'Turns on and off keyboard navigation.');
+    Blockly.navigation.actionNames.TOGGLE_KEYBOARD_NAV, 'Turns on and off keyboard navigation.');
 
 /**
  * List of actions that can be performed in read only mode.

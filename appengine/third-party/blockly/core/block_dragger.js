@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2017 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2017 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,10 +103,14 @@ Blockly.BlockDragger = function(block, workspace) {
  * @package
  */
 Blockly.BlockDragger.prototype.dispose = function() {
+  this.draggingBlock_ = null;
+  this.workspace_ = null;
+  this.startWorkspace_ = null;
   this.dragIconData_.length = 0;
 
   if (this.draggedConnectionManager_) {
     this.draggedConnectionManager_.dispose();
+    this.draggedConnectionManager_ = null;
   }
 };
 
@@ -297,12 +304,12 @@ Blockly.BlockDragger.prototype.updateCursorDuringBlockDrag_ = function() {
   if (this.wouldDeleteBlock_) {
     this.draggingBlock_.setDeleteStyle(true);
     if (this.deleteArea_ == Blockly.DELETE_AREA_TRASH && trashcan) {
-      trashcan.setOpen(true);
+      trashcan.setOpen_(true);
     }
   } else {
     this.draggingBlock_.setDeleteStyle(false);
     if (trashcan) {
-      trashcan.setOpen(false);
+      trashcan.setOpen_(false);
     }
   }
 };

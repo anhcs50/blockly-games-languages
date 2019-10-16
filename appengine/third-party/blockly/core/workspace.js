@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2012 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2012 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +29,11 @@ goog.provide('Blockly.Workspace');
 goog.require('Blockly.Cursor');
 goog.require('Blockly.MarkerCursor');
 goog.require('Blockly.Events');
-goog.require('Blockly.ThemeManager');
 goog.require('Blockly.Themes.Classic');
 goog.require('Blockly.utils');
 goog.require('Blockly.utils.math');
 goog.require('Blockly.VariableMap');
+goog.require('Blockly.WorkspaceComment');
 
 
 /**
@@ -128,16 +131,11 @@ Blockly.Workspace = function(opt_options) {
    */
   this.marker_ = new Blockly.MarkerCursor();
 
-  /**
-   * Object in charge of storing and updating the workspace theme.
-   * @type {!Blockly.ThemeManager}
-   * @protected
-   */
-  this.themeManager_ = this.options.parentWorkspace ?
-      this.options.parentWorkspace.getThemeManager() :
-      new Blockly.ThemeManager(this.options.theme || Blockly.Themes.Classic);
-  
-  this.themeManager_.subscribeWorkspace(this);
+  // Set the default theme. This is for headless workspaces. This will get
+  // overwritten by the theme passed into the inject call for rendered workspaces.
+  if (!Blockly.getTheme()) {
+    Blockly.setTheme(Blockly.Themes.Classic);
+  }
 };
 
 /**
@@ -168,7 +166,7 @@ Blockly.Workspace.prototype.connectionDBList = null;
 
 /**
  * Sets the cursor for keyboard navigation.
- * @param {!Blockly.Cursor} cursor The cursor used to navigate around the Blockly
+ * @param {Blockly.Cursor} cursor The cursor used to navigate around the Blockly
  *     AST for keyboard navigation.
  */
 Blockly.Workspace.prototype.setCursor = function(cursor) {
@@ -177,7 +175,7 @@ Blockly.Workspace.prototype.setCursor = function(cursor) {
 
 /**
  * Sets the marker for keyboard navigation.
- * @param {!Blockly.MarkerCursor} marker The marker used to mark a location for
+ * @param {Blockly.MarkerCursor} marker The marker used to mark a location for
  *     keyboard navigation.
  */
 Blockly.Workspace.prototype.setMarker = function(marker) {
@@ -200,78 +198,16 @@ Blockly.Workspace.prototype.getMarker = function() {
   return this.marker_;
 };
 
-/**
- * Get the workspace theme object.
- * @return {!Blockly.Theme} The workspace theme object.
- */
-Blockly.Workspace.prototype.getTheme = function() {
-  return this.themeManager_.getTheme();
-};
-
-/**
- * Set the workspace theme object.
- * If no theme is passed, default to the `Blockly.Themes.Classic` theme.
- * @param {Blockly.Theme} theme The workspace theme object.
- */
-Blockly.Workspace.prototype.setTheme = function(theme) {
-  if (!theme) {
-    theme = /** @type {!Blockly.Theme} */ (Blockly.Themes.Classic);
-  }
-  this.themeManager_.setTheme(theme);
-};
-
-/**
- * Refresh all blocks on the workspace after a theme update.
- * @package
- */
-Blockly.Workspace.prototype.refreshTheme = function() {
-  // Update all blocks in workspace that have a style name.
-  this.updateBlockStyles_(this.getAllBlocks(false).filter(
-      function(block) {
-        return block.getStyleName() !== undefined;
-      }
-  ));
-
-  var event = new Blockly.Events.Ui(null, 'theme', null, null);
-  event.workspaceId = this.id;
-  Blockly.Events.fire(event);
-};
-
-/**
- * Updates all the blocks with new style.
- * @param {!Array.<!Blockly.Block>} blocks List of blocks to update the style
- *     on.
- * @private
- */
-Blockly.Workspace.prototype.updateBlockStyles_ = function(blocks) {
-  for (var i = 0, block; block = blocks[i]; i++) {
-    var blockStyleName = block.getStyleName();
-    block.setStyle(blockStyleName);
-    if (block.mutator) {
-      block.mutator.updateBlockStyle(blockStyleName);
-    }
-  }
-};
 
 /**
  * Dispose of this workspace.
  * Unlink from all DOM elements to prevent memory leaks.
- * @suppress {checkTypes}
  */
 Blockly.Workspace.prototype.dispose = function() {
   this.listeners_.length = 0;
   this.clear();
   // Remove from workspace database.
   delete Blockly.Workspace.WorkspaceDB_[this.id];
-
-  if (this.themeManager_) {
-    this.themeManager_.unsubscribeWorkspace(this);
-    this.themeManager_.unsubscribe(this.svgBackground_);
-    if (!this.options.parentWorkspace) {
-      this.themeManager_.dispose();
-      this.themeManager_ = null;
-    }
-  }
 };
 
 /**
@@ -574,7 +510,7 @@ Blockly.Workspace.prototype.variableIndexOf = function(_name) {
  *     defaults to the empty string, which is a specific type.
  * @return {Blockly.VariableModel} The variable with the given name.
  */
-// TODO (#1559): Possibly delete this function after resolving #1559.
+// TODO (#1199): Possibly delete this function.
 Blockly.Workspace.prototype.getVariable = function(name, opt_type) {
   return this.variableMap_.getVariable(name, opt_type);
 };
@@ -651,7 +587,7 @@ Blockly.Workspace.prototype.remainingCapacity = function() {
     return Infinity;
   }
 
-  return this.options.maxBlocks - this.getAllBlocks(false).length;
+  return this.options.maxBlocks - this.getAllBlocks().length;
 };
 
 /**
@@ -873,13 +809,4 @@ Blockly.Workspace.getAll = function() {
     workspaces.push(Blockly.Workspace.WorkspaceDB_[workspaceId]);
   }
   return workspaces;
-};
-
-/**
- * Get the theme manager for this workspace.
- * @return {!Blockly.ThemeManager} The theme manager for this workspace.
- * @package
- */
-Blockly.Workspace.prototype.getThemeManager = function() {
-  return this.themeManager_;
 };

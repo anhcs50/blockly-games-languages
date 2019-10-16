@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2018 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2018 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +47,7 @@ goog.require('Blockly.utils.object');
 Blockly.Events.Ui = function(block, element, oldValue, newValue) {
   Blockly.Events.Ui.superClass_.constructor.call(this);
   this.blockId = block ? block.id : null;
-  this.workspaceId = block ? block.workspace.id : undefined;
+  this.workspaceId = block ? block.workspace.id : null;
   this.element = element;
   this.oldValue = oldValue;
   this.newValue = newValue;

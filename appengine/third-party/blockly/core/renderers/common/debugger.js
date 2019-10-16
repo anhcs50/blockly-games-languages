@@ -1,6 +1,9 @@
 /**
  * @license
- * Copyright 2019 Google LLC
+ * Visual Blocks Editor
+ *
+ * Copyright 2019 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,14 +126,15 @@ Blockly.blockRendering.Debug.prototype.drawSpacerElem = function(elem, rowHeight
   if (isRtl) {
     xPos = -(xPos + elem.width);
   }
-  var yPos = elem.centerline - elem.height / 2;
+  var debugRenderedHeight = Math.min(elem.height, rowHeight);
+  var yPos = elem.centerline - debugRenderedHeight / 2;
   this.debugElements_.push(Blockly.utils.dom.createSvgElement('rect',
       {
         'class': 'elemSpacerRect blockRenderDebug',
         'x': xPos,
         'y': yPos,
         'width': elem.width,
-        'height': elem.height,
+        'height': debugRenderedHeight,
         'stroke': 'pink',
         'fill': 'pink',
         'fill-opacity': '0.5',
