@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2019 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,13 +54,11 @@ Blockly.utils.object.inherits(Blockly.Menu, Blockly.Component);
  */
 Blockly.Menu.prototype.createDom = function() {
   var element = document.createElement('div');
-  element.setAttribute('id', this.getId());
+  element.id = this.getId();
   this.setElementInternal(element);
 
   // Set class
-  element.setAttribute('class', 'goog-menu goog-menu-vertical');
-  element.setAttribute('style', 'user-select: none;');
-
+  element.className = 'goog-menu goog-menu-vertical blocklyNonSelectable';
   element.tabIndex = 0;
 
   // Initialize ARIA role.
@@ -97,7 +92,7 @@ Blockly.Menu.prototype.blur = function() {
 
 /**
  * Set the menu accessibility role.
- * @param {!Blockly.utils.aria.Role|string} roleName role name.
+ * @param {!Blockly.utils.aria.Role} roleName role name.
  * @package
  */
 Blockly.Menu.prototype.setRole = function(roleName) {
@@ -275,7 +270,9 @@ Blockly.Menu.prototype.setHighlightedIndex = function(index) {
   // Bring the highlighted item into view. This has no effect if the menu is not
   // scrollable.
   if (child) {
-    Blockly.utils.style.scrollIntoContainerView(child.getElement(), this.getElement());
+    Blockly.utils.style.scrollIntoContainerView(
+        /** @type {!Element} */ (child.getElement()),
+        /** @type {!Element} */ (this.getElement()));
   }
 };
 

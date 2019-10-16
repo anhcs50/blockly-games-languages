@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2017 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +25,6 @@ goog.provide('Blockly.HorizontalFlyout');
 
 goog.require('Blockly.Block');
 goog.require('Blockly.Flyout');
-goog.require('Blockly.FlyoutButton');
 goog.require('Blockly.Scrollbar');
 goog.require('Blockly.utils');
 goog.require('Blockly.utils.object');
@@ -207,7 +203,7 @@ Blockly.HorizontalFlyout.prototype.setBackgroundPath_ = function(width,
     // Bottom.
     path.push('a', this.CORNER_RADIUS, this.CORNER_RADIUS, 0, 0, 1,
         -this.CORNER_RADIUS, this.CORNER_RADIUS);
-    path.push('h', -1 * width);
+    path.push('h', -width);
     // Left.
     path.push('a', this.CORNER_RADIUS, this.CORNER_RADIUS, 0, 0, 1,
         -this.CORNER_RADIUS, -this.CORNER_RADIUS);

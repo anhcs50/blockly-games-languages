@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2016 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2016 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +23,6 @@
 
 goog.provide('Blockly.Options');
 
-goog.require('Blockly.Themes.Classic');
 goog.require('Blockly.utils.userAgent');
 goog.require('Blockly.Xml');
 
@@ -118,7 +114,7 @@ Blockly.Options = function(options) {
   } else {
     var oneBasedIndex = !!options['oneBasedIndex'];
   }
-  var theme = options['theme'] || Blockly.Themes.Classic;
+  var theme = options['theme'];
   var keyMap = options['keyMap'] || Blockly.user.keyMap.createDefaultKeyMap();
 
   var renderer = options['renderer'] || 'geras';

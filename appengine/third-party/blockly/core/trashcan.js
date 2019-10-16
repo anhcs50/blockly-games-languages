@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2011 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2011 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +23,9 @@
 
 goog.provide('Blockly.Trashcan');
 
-goog.require('Blockly.HorizontalFlyout');
+goog.require('Blockly.Scrollbar');
 goog.require('Blockly.utils.dom');
 goog.require('Blockly.utils.Rect');
-goog.require('Blockly.VerticalFlyout');
 goog.require('Blockly.Xml');
 
 
@@ -47,15 +43,8 @@ Blockly.Trashcan = function(workspace) {
   this.workspace_ = workspace;
 
   /**
-   * True if the trashcan contains blocks, otherwise false.
-   * @type {boolean}
-   * @private
-   */
-  this.hasBlocks_ = false;
-
-  /**
-   * A list of Xml (stored as strings) representing blocks "inside" the trashcan.
-   * @type {Array}
+   * A list of XML (stored as strings) representing blocks in the trashcan.
+   * @type {!Array.<string>}
    * @private
    */
   this.contents_ = [];
@@ -78,14 +67,20 @@ Blockly.Trashcan = function(workspace) {
     flyoutWorkspaceOptions.toolboxPosition =
         this.workspace_.toolboxPosition == Blockly.TOOLBOX_AT_TOP ?
         Blockly.TOOLBOX_AT_BOTTOM : Blockly.TOOLBOX_AT_TOP;
+    if (!Blockly.HorizontalFlyout) {
+      throw Error('Missing require for Blockly.HorizontalFlyout');
+    }
     this.flyout_ = new Blockly.HorizontalFlyout(flyoutWorkspaceOptions);
   } else {
     flyoutWorkspaceOptions.toolboxPosition =
       this.workspace_.toolboxPosition == Blockly.TOOLBOX_AT_RIGHT ?
         Blockly.TOOLBOX_AT_LEFT : Blockly.TOOLBOX_AT_RIGHT;
+    if (!Blockly.VerticalFlyout) {
+      throw Error('Missing require for Blockly.VerticalFlyout');
+    }
     this.flyout_ = new Blockly.VerticalFlyout(flyoutWorkspaceOptions);
   }
-  this.workspace_.addChangeListener(this.onDelete_());
+  this.workspace_.addChangeListener(this.onDelete_.bind(this));
 };
 
 /**
@@ -168,14 +163,14 @@ Blockly.Trashcan.prototype.minOpenness_ = 0;
 
 /**
  * The SVG group containing the trash can.
- * @type {Element}
+ * @type {SVGElement}
  * @private
  */
 Blockly.Trashcan.prototype.svgGroup_ = null;
 
 /**
  * The SVG image element of the trash can lid.
- * @type {Element}
+ * @type {SVGElement}
  * @private
  */
 Blockly.Trashcan.prototype.svgLid_ = null;
@@ -210,7 +205,7 @@ Blockly.Trashcan.prototype.top_ = 0;
 
 /**
  * Create the trash can elements.
- * @return {!Element} The trash can's SVG group.
+ * @return {!SVGElement} The trash can's SVG group.
  */
 Blockly.Trashcan.prototype.createDom = function() {
   /* Here's the markup that will be generated:
@@ -292,15 +287,10 @@ Blockly.Trashcan.prototype.init = function(verticalSpacing) {
     Blockly.utils.dom.insertAfter(this.flyout_.createDom('svg'),
         this.workspace_.getParentSvg());
     this.flyout_.init(this.workspace_);
-    this.flyout_.isBlockCreatable_ = function() {
-      // All blocks, including disabled ones, can be dragged from the
-      // trashcan flyout.
-      return true;
-    };
   }
 
   this.verticalSpacing_ = this.MARGIN_BOTTOM_ + verticalSpacing;
-  this.setOpen_(false);
+  this.setOpen(false);
   return this.verticalSpacing_ + this.BODY_HEIGHT_ + this.LID_HEIGHT_;
 };
 
@@ -375,9 +365,9 @@ Blockly.Trashcan.prototype.getClientRect = function() {
 /**
  * Flip the lid open or shut.
  * @param {boolean} state True if open.
- * @private
+ * @package
  */
-Blockly.Trashcan.prototype.setOpen_ = function(state) {
+Blockly.Trashcan.prototype.setOpen = function(state) {
   if (this.isOpen == state) {
     return;
   }
@@ -421,14 +411,14 @@ Blockly.Trashcan.prototype.setLidAngle_ = function(lidAngle) {
  * Called externally after a drag.
  */
 Blockly.Trashcan.prototype.close = function() {
-  this.setOpen_(false);
+  this.setOpen(false);
 };
 
 /**
  * Inspect the contents of the trash.
  */
 Blockly.Trashcan.prototype.click = function() {
-  if (!this.hasBlocks_) {
+  if (!this.contents_.length) {
     return;
   }
 
@@ -444,10 +434,9 @@ Blockly.Trashcan.prototype.click = function() {
  * @private
  */
 Blockly.Trashcan.prototype.mouseOver_ = function() {
-  if (!this.hasBlocks_) {
-    return;
+  if (this.contents_.length) {
+    this.setOpen(true);
   }
-  this.setOpen_(true);
 };
 
 /**
@@ -457,41 +446,34 @@ Blockly.Trashcan.prototype.mouseOver_ = function() {
  */
 Blockly.Trashcan.prototype.mouseOut_ = function() {
   // No need to do a .hasBlocks check here because if it doesn't the trashcan
-  // wont be open in the first place, and setOpen_ won't run.
-  this.setOpen_(false);
+  // won't be open in the first place, and setOpen won't run.
+  this.setOpen(false);
 };
 
 /**
  * Handle a BLOCK_DELETE event. Adds deleted blocks oldXml to the content array.
- * @return {!Function} Function to call when a block is deleted.
+ * @param {!Blockly.Events.Abstract} event Workspace event.
  * @private
  */
-Blockly.Trashcan.prototype.onDelete_ = function() {
-  var trashcan = this;
-  return function(event) {
-    if (trashcan.workspace_.options.maxTrashcanContents <= 0) {
+Blockly.Trashcan.prototype.onDelete_ = function(event) {
+  if (this.workspace_.options.maxTrashcanContents <= 0) {
+    return;
+  }
+  if (event.type == Blockly.Events.BLOCK_DELETE &&
+      event.oldXml.tagName.toLowerCase() != 'shadow') {
+    var cleanedXML = this.cleanBlockXML_(event.oldXml);
+    if (this.contents_.indexOf(cleanedXML) != -1) {
       return;
     }
-    if (event.type == Blockly.Events.BLOCK_DELETE &&
-        event.oldXml.tagName.toLowerCase() != 'shadow') {
-      var cleanedXML = trashcan.cleanBlockXML_(event.oldXml);
-      if (trashcan.contents_.indexOf(cleanedXML) != -1) {
-        return;
-      }
-      trashcan.contents_.unshift(cleanedXML);
-      if (trashcan.contents_.length >
-          trashcan.workspace_.options.maxTrashcanContents) {
-        trashcan.contents_.splice(
-            trashcan.workspace_.options.maxTrashcanContents,
-            trashcan.contents_.length -
-            trashcan.workspace_.options.maxTrashcanContents);
-      }
-
-      trashcan.hasBlocks_ = true;
-      trashcan.minOpenness_ = trashcan.HAS_BLOCKS_LID_ANGLE;
-      trashcan.setLidAngle_(trashcan.minOpenness_ * 45);
+    this.contents_.unshift(cleanedXML);
+    while (this.contents_.length >
+        this.workspace_.options.maxTrashcanContents) {
+      this.contents_.pop();
     }
-  };
+
+    this.minOpenness_ = this.HAS_BLOCKS_LID_ANGLE;
+    this.setLidAngle_(this.minOpenness_ * 45);
+  }
 };
 
 /**
@@ -514,6 +496,12 @@ Blockly.Trashcan.prototype.cleanBlockXML_ = function(xml) {
       node.removeAttribute('x');
       node.removeAttribute('y');
       node.removeAttribute('id');
+      node.removeAttribute('disabled');
+      if (node.nodeName == 'comment') {  // Future proof just in case.
+        node.removeAttribute('h');
+        node.removeAttribute('w');
+        node.removeAttribute('pinned');
+      }
     }
 
     // Try to go down the tree

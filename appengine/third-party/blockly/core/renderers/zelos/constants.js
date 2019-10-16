@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2019 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,11 +68,6 @@ Blockly.zelos.ConstantProvider = function() {
   /**
    * @override
    */
-  this.DARK_PATH_OFFSET = 0;
-
-  /**
-   * @override
-   */
   this.TAB_OFFSET_FROM_TOP = 0;
 
 };
@@ -104,9 +96,9 @@ Blockly.zelos.ConstantProvider.prototype.makeHexagonal = function() {
     var width = height / 2;
     var forward = up ? -1 : 1;
     var direction = right ? -1 : 1;
-
-    return Blockly.utils.svgPaths.lineTo(-1 * direction * width, forward * height / 2) +
-        Blockly.utils.svgPaths.lineTo(direction * width, forward * height / 2);
+    var dy = forward * height / 2;
+    return Blockly.utils.svgPaths.lineTo(-direction * width, dy) +
+        Blockly.utils.svgPaths.lineTo(direction * width, dy);
   }
 
   return {
@@ -249,7 +241,6 @@ Blockly.zelos.ConstantProvider.prototype.makeNotch = function() {
     );
   }
 
-  // TODO: Find a relationship between width and path
   var pathLeft = makeMainPath(1);
   var pathRight = makeMainPath(-1);
 

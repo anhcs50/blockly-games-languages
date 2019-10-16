@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2019 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,55 +58,81 @@ Blockly.tree.BaseNode = function(content, config) {
    */
   this.content_ = content;
 
-  /** @private {string} */
+  /**
+   * @type {string}
+   * @private
+   */
   this.iconClass_;
 
-  /** @private {string} */
+  /**
+   * @type {string}
+   * @private
+   */
   this.expandedIconClass_;
 
-  /** @protected {Blockly.tree.TreeControl} */
+  /**
+   * @type {Blockly.tree.TreeControl}
+   * @protected
+   */
   this.tree;
 
-  /** @private {Blockly.tree.BaseNode} */
+  /**
+   * @type {Blockly.tree.BaseNode}
+   * @private
+   */
   this.previousSibling_;
 
-  /** @private {Blockly.tree.BaseNode} */
+  /**
+   * @type {Blockly.tree.BaseNode}
+   * @private
+   */
   this.nextSibling_;
 
-  /** @private {Blockly.tree.BaseNode} */
+  /**
+   * @type {Blockly.tree.BaseNode}
+   * @private
+   */
   this.firstChild_;
 
-  /** @private {Blockly.tree.BaseNode} */
+  /**
+   * @type {Blockly.tree.BaseNode}
+   * @private
+   */
   this.lastChild_;
 
   /**
    * Whether the tree item is selected.
-   * @private {boolean}
+   * @type {boolean}
+   * @private
    */
   this.selected_ = false;
 
   /**
    * Whether the tree node is expanded.
-   * @private {boolean}
+   * @type {boolean}
+   * @private
    */
   this.expanded_ = false;
 
   /**
    * Tooltip for the tree item
-   * @private {?string}
+   * @type {?string}
+   * @private
    */
   this.toolTip_ = null;
 
   /**
    * Whether to allow user to collapse this node.
-   * @private {boolean}
+   * @type {boolean}
+   * @private
    */
   this.isUserCollapsible_ = true;
 
   /**
    * Nesting depth of this node; cached result of computeDepth_.
    * -1 if value has not been cached.
-   * @private {number}
+   * @type {number}
+   * @private
    */
   this.depth_ = -1;
 };
@@ -165,10 +188,8 @@ Blockly.tree.BaseNode.prototype.initAccessibility = function() {
       label.id = this.getId() + '.label';
     }
 
-    Blockly.utils.aria.setRole(el,
-        Blockly.utils.aria.Role.TREEITEM);
-    Blockly.utils.aria.setState(el,
-        Blockly.utils.aria.State.SELECTED, false);
+    Blockly.utils.aria.setRole(el, Blockly.utils.aria.Role.TREEITEM);
+    Blockly.utils.aria.setState(el, Blockly.utils.aria.State.SELECTED, false);
     Blockly.utils.aria.setState(el,
         Blockly.utils.aria.State.LEVEL, this.getDepth());
     if (label) {
@@ -233,8 +254,7 @@ Blockly.tree.BaseNode.prototype.exitDocument = function() {
  * The method assumes that the child doesn't have parent node yet.
  * @override
  */
-Blockly.tree.BaseNode.prototype.addChildAt = function(
-    child, index) {
+Blockly.tree.BaseNode.prototype.addChildAt = function(child, index) {
   child = /** @type {Blockly.tree.BaseNode} */ (child);
   var prevNode = this.getChildAt(index - 1);
   var nextNode = this.getChildAt(index);
@@ -293,21 +313,15 @@ Blockly.tree.BaseNode.prototype.addChildAt = function(
 };
 
 /**
- * Adds a node as a child to the current node.
+ * Appends a node as a child to the current node.
  * @param {Blockly.tree.BaseNode} child The child to add.
- * @param {Blockly.tree.BaseNode=} opt_before If specified, the new child is
- *    added as a child before this one. If not specified, it's appended to the
- *    end.
- * @return {!Blockly.tree.BaseNode} The added child.
  * @package
  */
-Blockly.tree.BaseNode.prototype.add = function(child, opt_before) {
+Blockly.tree.BaseNode.prototype.add = function(child) {
   if (child.getParent()) {
-    child.getParent().removeChild(child);
+    throw Error(Blockly.Component.Error.PARENT_UNABLE_TO_BE_SET);
   }
-  this.addChildAt(
-      child, opt_before ? this.indexOfChild(opt_before) : this.getChildCount());
-  return child;
+  this.addChildAt(child, this.getChildCount());
 };
 
 /**
@@ -613,7 +627,10 @@ Blockly.tree.BaseNode.prototype.toDom = function() {
   var nonEmptyAndExpanded = this.getExpanded() && this.hasChildren();
 
   var children = document.createElement('div');
-  children.setAttribute('style', this.getLineStyle());
+  children.style.backgroundPosition = this.getBackgroundPosition();
+  if (!nonEmptyAndExpanded) {
+    children.style.display = 'none';
+  }
 
   if (nonEmptyAndExpanded) {
     // children
@@ -621,7 +638,7 @@ Blockly.tree.BaseNode.prototype.toDom = function() {
   }
 
   var node = document.createElement('div');
-  node.setAttribute('id', this.getId());
+  node.id = this.getId();
 
   node.appendChild(this.getRowDom());
   node.appendChild(children);
@@ -642,12 +659,10 @@ Blockly.tree.BaseNode.prototype.getPixelIndent_ = function() {
  * @protected
  */
 Blockly.tree.BaseNode.prototype.getRowDom = function() {
-  var style = 'padding-' + (this.isRightToLeft() ? 'right' : 'left') + ':' +
-      this.getPixelIndent_() + 'px';
-
   var row = document.createElement('div');
-  row.setAttribute('class', this.getRowClassName());
-  row.setAttribute('style', style);
+  row.className = this.getRowClassName();
+  row.style['padding-' + (this.isRightToLeft() ? 'right' : 'left')] =
+      this.getPixelIndent_() + 'px';
 
   row.appendChild(this.getIconDom());
   row.appendChild(this.getLabelDom());
@@ -673,7 +688,7 @@ Blockly.tree.BaseNode.prototype.getRowClassName = function() {
  */
 Blockly.tree.BaseNode.prototype.getLabelDom = function() {
   var label = document.createElement('span');
-  label.setAttribute('class', this.config_.cssItemLabel || '');
+  label.className = this.config_.cssItemLabel || '';
   label.textContent = this.getText();
   return label;
 };
@@ -684,8 +699,8 @@ Blockly.tree.BaseNode.prototype.getLabelDom = function() {
  */
 Blockly.tree.BaseNode.prototype.getIconDom = function() {
   var icon = document.createElement('span');
-  icon.setAttribute('style', 'display: inline-block;');
-  icon.setAttribute('class', this.getCalculatedIconClass());
+  icon.style.display = 'inline-block';
+  icon.className = this.getCalculatedIconClass();
   return icon;
 };
 
@@ -698,22 +713,12 @@ Blockly.tree.BaseNode.prototype.getCalculatedIconClass = function() {
 };
 
 /**
- * @return {string} The line style.
- * @protected
- */
-Blockly.tree.BaseNode.prototype.getLineStyle = function() {
-  var nonEmptyAndExpanded = this.getExpanded() && this.hasChildren();
-  return 'background-position: ' + this.getBackgroundPosition() + '; ' +
-      (nonEmptyAndExpanded ? '' : 'display: none');
-};
-
-/**
  * @return {string} The background position style value.
  * @protected
  */
 Blockly.tree.BaseNode.prototype.getBackgroundPosition = function() {
   return (this.isLastSibling() ? '-100' : (this.getDepth() - 1) *
-                  this.config_.indentWidth) + 'px 0';
+      this.config_.indentWidth) + 'px 0';
 };
 
 /**

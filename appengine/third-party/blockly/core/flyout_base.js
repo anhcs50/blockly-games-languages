@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2011 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2011 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +28,6 @@ goog.require('Blockly.blockRendering');
 goog.require('Blockly.Events');
 goog.require('Blockly.Events.BlockCreate');
 goog.require('Blockly.Events.VarCreate');
-goog.require('Blockly.FlyoutButton');
 goog.require('Blockly.FlyoutCursor');
 goog.require('Blockly.Gesture');
 goog.require('Blockly.MarkerCursor');
@@ -86,7 +82,7 @@ Blockly.Flyout = function(workspaceOptions) {
   /**
    * List of background mats that lurk behind each block to catch clicks
    * landing in the blocks' lakes and bays.
-   * @type {!Array.<!Element>}
+   * @type {!Array.<!SVGElement>}
    * @private
    */
   this.mats_ = [];
@@ -215,7 +211,7 @@ Blockly.Flyout.prototype.dragAngleRange_ = 70;
  * separate svg element.
  * @param {string} tagName The type of tag to put the flyout in. This
  *     should be <svg> or <g>.
- * @return {!Element} The flyout's SVG group.
+ * @return {!SVGElement} The flyout's SVG group.
  */
 Blockly.Flyout.prototype.createDom = function(tagName) {
   /*
@@ -231,6 +227,8 @@ Blockly.Flyout.prototype.createDom = function(tagName) {
   this.svgBackground_ = Blockly.utils.dom.createSvgElement('path',
       {'class': 'blocklyFlyoutBackground'}, this.svgGroup_);
   this.svgGroup_.appendChild(this.workspace_.createDom());
+  this.workspace_.getThemeManager().subscribe(this.svgBackground_, 'flyout', 'fill');
+  this.workspace_.getThemeManager().subscribe(this.svgBackground_, 'flyoutOpacity', 'fill-opacity');
   return this.svgGroup_;
 };
 
@@ -287,6 +285,7 @@ Blockly.Flyout.prototype.dispose = function() {
     this.scrollbar_ = null;
   }
   if (this.workspace_) {
+    this.workspace_.getThemeManager().unsubscribe(this.svgBackground_);
     this.workspace_.targetWorkspace = null;
     this.workspace_.dispose();
     this.workspace_ = null;
@@ -371,7 +370,7 @@ Blockly.Flyout.prototype.updateDisplay_ = function() {
     show = this.isVisible();
   }
   this.svgGroup_.style.display = show ? 'block' : 'none';
-  // Update the scrollbar's visiblity too since it should mimic the
+  // Update the scrollbar's visibility too since it should mimic the
   // flyout's visibility.
   this.scrollbar_.setContainerVisible(show);
 };
@@ -496,6 +495,9 @@ Blockly.Flyout.prototype.show = function(xmlList) {
       case 'LABEL':
       case 'BUTTON':
         var isLabel = xml.tagName.toUpperCase() == 'LABEL';
+        if (!Blockly.FlyoutButton) {
+          throw Error('Missing require for Blockly.FlyoutButton');
+        }
         var curButton = new Blockly.FlyoutButton(this.workspace_,
             this.targetWorkspace_, xml, isLabel);
         contents.push({type: 'button', button: curButton});
@@ -567,10 +569,10 @@ Blockly.Flyout.prototype.clearOldBlocks_ = function() {
 
 /**
  * Add listeners to a block that has been added to the flyout.
- * @param {!Element} root The root node of the SVG group the block is in.
+ * @param {!SVGElement} root The root node of the SVG group the block is in.
  * @param {!Blockly.Block} block The block to add listeners for.
- * @param {!Element} rect The invisible rectangle under the block that acts as
- *     a mat for that block.
+ * @param {!SVGElement} rect The invisible rectangle under the block that acts
+ *     as a mat for that block.
  * @protected
  */
 Blockly.Flyout.prototype.addBlockListeners_ = function(root, block, rect) {

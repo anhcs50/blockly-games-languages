@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2019 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +56,19 @@ Blockly.blockRendering.register = function(name, rendererClass) {
     throw Error('Renderer has already been registered.');
   }
   Blockly.blockRendering.rendererMap_[name] = rendererClass;
+};
+
+/**
+ * Unregisters the renderer registered with the given name.
+ * @param {string} name The name of the renderer.
+ */
+Blockly.blockRendering.unregister = function(name) {
+  if (Blockly.blockRendering.rendererMap_[name]) {
+    delete Blockly.blockRendering.rendererMap_[name];
+  } else {
+    console.warn('No renderer mapping for name "' + name +
+        '" found to unregister');
+  }
 };
 
 /**

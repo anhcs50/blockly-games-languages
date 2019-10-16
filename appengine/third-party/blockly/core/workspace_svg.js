@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2014 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2014 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,32 +23,24 @@
 
 goog.provide('Blockly.WorkspaceSvg');
 
-// TODO(scr): Fix circular dependencies
-//goog.require('Blockly.BlockSvg');
+goog.require('Blockly.BlockSvg');
 goog.require('Blockly.blockRendering');
 goog.require('Blockly.ConnectionDB');
 goog.require('Blockly.constants');
-goog.require('Blockly.CursorSvg');
 goog.require('Blockly.Events');
 goog.require('Blockly.Events.BlockCreate');
 goog.require('Blockly.Gesture');
 goog.require('Blockly.Grid');
 goog.require('Blockly.Msg');
 goog.require('Blockly.Options');
-goog.require('Blockly.ScrollbarPair');
-goog.require('Blockly.Touch');
 goog.require('Blockly.TouchGesture');
 goog.require('Blockly.utils');
 goog.require('Blockly.utils.Coordinate');
 goog.require('Blockly.utils.dom');
 goog.require('Blockly.utils.object');
 goog.require('Blockly.utils.Rect');
-goog.require('Blockly.VariablesDynamic');
 goog.require('Blockly.Workspace');
 goog.require('Blockly.WorkspaceAudio');
-goog.require('Blockly.WorkspaceComment');
-goog.require('Blockly.WorkspaceCommentSvg');
-goog.require('Blockly.WorkspaceCommentSvg.render');
 goog.require('Blockly.WorkspaceDragSurfaceSvg');
 goog.require('Blockly.Xml');
 
@@ -98,10 +87,11 @@ Blockly.WorkspaceSvg = function(options,
 
   /**
    * Object in charge of loading, storing, and playing audio for a workspace.
-   * @type {Blockly.WorkspaceAudio}
+   * @type {!Blockly.WorkspaceAudio}
    * @private
    */
-  this.audioManager_ = new Blockly.WorkspaceAudio(options.parentWorkspace);
+  this.audioManager_ = new Blockly.WorkspaceAudio(
+      /** @type {Blockly.WorkspaceSvg} */ (options.parentWorkspace));
 
   /**
    * This workspace's grid object or null.
@@ -372,7 +362,7 @@ Blockly.WorkspaceSvg.prototype.lastRecordedPageScroll_ = null;
 /**
  * Map from function names to callbacks, for deciding what to do when a button
  * is clicked.
- * @type {!Object.<string, function(!Blockly.FlyoutButton)>}
+ * @type {!Object.<string, ?function(!Blockly.FlyoutButton)>}
  * @private
  */
 Blockly.WorkspaceSvg.prototype.flyoutButtonCallbacks_ = {};
@@ -380,7 +370,7 @@ Blockly.WorkspaceSvg.prototype.flyoutButtonCallbacks_ = {};
 /**
  * Map from function names to callbacks, for deciding what to do when a custom
  * toolbox category is opened.
- * @type {!Object.<string, function(!Blockly.Workspace):!Array.<!Element>>}
+ * @type {!Object.<string, ?function(!Blockly.Workspace):!Array.<!Element>>}
  * @private
  */
 Blockly.WorkspaceSvg.prototype.toolboxCategoryCallbacks_ = {};
@@ -425,35 +415,31 @@ Blockly.WorkspaceSvg.prototype.getRenderer = function() {
 /**
  * Sets the cursor for use with keyboard navigation.
  *
- * @param {Blockly.Cursor} cursor The cursor used to move around this workspace.
+ * @param {!Blockly.Cursor} cursor The cursor used to move around this workspace.
  * @override
  */
 Blockly.WorkspaceSvg.prototype.setCursor = function(cursor) {
-  if (this.cursor_ && this.cursor_.getDrawer()) {
+  if (this.cursor_.getDrawer()) {
     this.cursor_.getDrawer().dispose();
   }
   this.cursor_ = cursor;
-  if (this.cursor_) {
-    this.cursor_.setDrawer(this.getRenderer().makeCursorDrawer(this, false));
-    this.setCursorSvg(this.cursor_.getDrawer().createDom());
-  }
+  this.cursor_.setDrawer(this.getRenderer().makeCursorDrawer(this, false));
+  this.setCursorSvg(this.cursor_.getDrawer().createDom());
 };
 
 /**
  * Sets the marker for use with keyboard navigation.
- * @param {Blockly.MarkerCursor} marker The immovable cursor used to mark a
+ * @param {!Blockly.MarkerCursor} marker The immovable cursor used to mark a
  *     location on the workspace.
  * @override
  */
 Blockly.WorkspaceSvg.prototype.setMarker = function(marker) {
-  if (this.marker_ && this.marker_.getDrawer()) {
+  if (this.marker_.getDrawer()) {
     this.marker_.getDrawer().dispose();
   }
   this.marker_ = marker;
-  if (this.marker_) {
-    this.marker_.setDrawer(this.getRenderer().makeCursorDrawer(this, true));
-    this.setMarkerSvg(this.marker_.getDrawer().createDom());
-  }
+  this.marker_.setDrawer(this.getRenderer().makeCursorDrawer(this, true));
+  this.setMarkerSvg(this.marker_.getDrawer().createDom());
 };
 
 /**
@@ -637,6 +623,8 @@ Blockly.WorkspaceSvg.prototype.createDom = function(opt_backgroundClass) {
     if (opt_backgroundClass == 'blocklyMainBackground' && this.grid_) {
       this.svgBackground_.style.fill =
           'url(#' + this.grid_.getPatternId() + ')';
+    } else {
+      this.themeManager_.subscribe(this.svgBackground_, 'workspace', 'fill');
     }
   }
   /** @type {SVGElement} */
@@ -687,7 +675,6 @@ Blockly.WorkspaceSvg.prototype.dispose = function() {
   if (this.currentGesture_) {
     this.currentGesture_.cancel();
   }
-  Blockly.WorkspaceSvg.superClass_.dispose.call(this);
   if (this.svgGroup_) {
     Blockly.utils.dom.removeNode(this.svgGroup_);
     this.svgGroup_ = null;
@@ -732,6 +719,11 @@ Blockly.WorkspaceSvg.prototype.dispose = function() {
     this.grid_.dispose();
     this.grid_ = null;
   }
+
+  if (this.themeManager_) {
+    this.themeManager_.unsubscribe(this.svgBackground_);
+  }
+  Blockly.WorkspaceSvg.superClass_.dispose.call(this);
 
   this.connectionDBList = null;
 
@@ -810,8 +802,14 @@ Blockly.WorkspaceSvg.prototype.addFlyout_ = function(tagName) {
     renderer: this.options.renderer
   };
   if (this.horizontalLayout) {
+    if (!Blockly.HorizontalFlyout) {
+      throw Error('Missing require for Blockly.HorizontalFlyout');
+    }
     this.flyout_ = new Blockly.HorizontalFlyout(workspaceOptions);
   } else {
+    if (!Blockly.VerticalFlyout) {
+      throw Error('Missing require for Blockly.VerticalFlyout');
+    }
     this.flyout_ = new Blockly.VerticalFlyout(workspaceOptions);
   }
   this.flyout_.autoClose = false;
@@ -920,7 +918,7 @@ Blockly.WorkspaceSvg.prototype.updateScreenCalculationsIfScrolled =
 
 /**
  * Get the SVG element that forms the drawing surface.
- * @return {!Element} SVG element.
+ * @return {!SVGElement} SVG element.
  */
 Blockly.WorkspaceSvg.prototype.getCanvas = function() {
   return this.svgBlockCanvas_;
@@ -936,7 +934,7 @@ Blockly.WorkspaceSvg.prototype.getBubbleCanvas = function() {
 
 /**
  * Get the SVG element that contains this workspace.
- * @return {Element} SVG element.
+ * @return {SVGElement} SVG element.
  */
 Blockly.WorkspaceSvg.prototype.getParentSvg = function() {
   if (this.cachedParentSvg_) {
@@ -948,7 +946,7 @@ Blockly.WorkspaceSvg.prototype.getParentSvg = function() {
       this.cachedParentSvg_ = element;
       return element;
     }
-    element = element.parentNode;
+    element = /** @type {!SVGElement} */ (element.parentNode);
   }
   return null;
 };
@@ -1079,6 +1077,12 @@ Blockly.WorkspaceSvg.prototype.setVisible = function(isVisible) {
     this.toolbox_.HtmlDiv.style.display = isVisible ? 'block' : 'none';
   }
   if (isVisible) {
+    var blocks = this.getAllBlocks(false);
+    // Tell each block on the workspace to mark its fields as dirty.
+    for (var i = blocks.length - 1; i >= 0; i--) {
+      blocks[i].markDirty();
+    }
+
     this.render();
     if (this.toolbox_) {
       this.toolbox_.position();
@@ -1179,8 +1183,11 @@ Blockly.WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
 
     // Handle paste for keyboard navigation
     var markedNode = this.getMarker().getCurNode();
-    if (Blockly.keyboardAccessibilityMode && markedNode) {
-      Blockly.navigation.insertBlock(block, markedNode.getLocation());
+    if (Blockly.keyboardAccessibilityMode && markedNode &&
+        markedNode.isConnection()) {
+      var markedLocation =
+        /** @type {!Blockly.Connection} */ (markedNode.getLocation());
+      Blockly.navigation.insertBlock(block, markedLocation);
       return;
     }
 
@@ -1721,10 +1728,7 @@ Blockly.WorkspaceSvg.prototype.updateToolbox = function(tree) {
       throw Error('Existing toolbox has no categories.  Can\'t change mode.');
     }
     this.options.languageTree = tree;
-    var openNode = this.toolbox_.populate_(tree);
-    this.toolbox_.addColour_();
-    this.toolbox_.position();
-    this.toolbox_.tree_.setSelectedItem(openNode);
+    this.toolbox_.renderTree(tree);
   } else {
     if (!this.flyout_) {
       throw Error('Existing toolbox has categories.  Can\'t change mode.');
@@ -1744,7 +1748,7 @@ Blockly.WorkspaceSvg.prototype.markFocused = function() {
     Blockly.mainWorkspace = this;
     // We call e.preventDefault in many event handlers which means we
     // need to explicitly grab focus (e.g from a textarea) because
-    // the browser will not do it for us.  How to do this is browser dependant.
+    // the browser will not do it for us.  How to do this is browser dependent.
     this.setBrowserFocus();
   }
 };
@@ -1754,7 +1758,7 @@ Blockly.WorkspaceSvg.prototype.markFocused = function() {
  * @private
  */
 Blockly.WorkspaceSvg.prototype.setBrowserFocus = function() {
-  // Blur whatever was focused since explcitly grabbing focus below does not
+  // Blur whatever was focused since explicitly grabbing focus below does not
   // work in Edge.
   if (document.activeElement) {
     document.activeElement.blur();
@@ -2500,7 +2504,7 @@ Blockly.WorkspaceSvg.prototype.cancelCurrentGesture = function() {
 
 /**
  * Get the audio manager for this workspace.
- * @return {Blockly.WorkspaceAudio} The audio manager for this workspace.
+ * @return {!Blockly.WorkspaceAudio} The audio manager for this workspace.
  */
 Blockly.WorkspaceSvg.prototype.getAudioManager = function() {
   return this.audioManager_;
@@ -2513,4 +2517,19 @@ Blockly.WorkspaceSvg.prototype.getAudioManager = function() {
  */
 Blockly.WorkspaceSvg.prototype.getGrid = function() {
   return this.grid_;
+};
+
+/**
+ * Refresh all blocks on the workspace, toolbox and flyout after a theme update.
+ * @package
+ * @override
+ */
+Blockly.WorkspaceSvg.prototype.refreshTheme = function() {
+  Blockly.WorkspaceSvg.superClass_.refreshTheme.call(this);
+
+  // Update current toolbox selection.
+  this.refreshToolboxSelection();
+  if (this.toolbox_) {
+    this.toolbox_.updateColourFromTheme();
+  }
 };

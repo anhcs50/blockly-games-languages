@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2017 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,6 +123,19 @@ Blockly.Extensions.registerMutator = function(name, mixinObj, opt_helperFn,
       opt_helperFn.apply(this);
     }
   });
+};
+
+/**
+ * Unregisters the extension registered with the given name.
+ * @param {string} name The name of the extension to unregister.
+ */
+Blockly.Extensions.unregister = function(name) {
+  if (Blockly.Extensions.ALL_[name]) {
+    delete Blockly.Extensions.ALL_[name];
+  } else {
+    console.warn('No extension mapping for name "' + name +
+        '" found to unregister');
+  }
 };
 
 /**
@@ -342,7 +352,7 @@ Blockly.Extensions.buildTooltipForDropdown = function(dropdownName,
    * @this {Blockly.Block}
    */
   var extensionFn = function() {
-    if (this.type && blockTypesChecked.indexOf(this.type) === -1) {
+    if (this.type && blockTypesChecked.indexOf(this.type) == -1) {
       Blockly.Extensions.checkDropdownOptionsInTable_(
           this, dropdownName, lookupTable);
       blockTypesChecked.push(this.type);
@@ -352,7 +362,7 @@ Blockly.Extensions.buildTooltipForDropdown = function(dropdownName,
       var value = this.getFieldValue(dropdownName);
       var tooltip = lookupTable[value];
       if (tooltip == null) {
-        if (blockTypesChecked.indexOf(this.type) === -1) {
+        if (blockTypesChecked.indexOf(this.type) == -1) {
           // Warn for missing values on generated tooltips.
           var warning = 'No tooltip mapping for value ' + value +
               ' of field ' + dropdownName;

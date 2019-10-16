@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Language
- *
- * Copyright 2012 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2012 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -256,15 +253,8 @@ Blockly.JavaScript.scrub_ = function(block, code, opt_thisOnly) {
     var comment = block.getCommentText();
     if (comment) {
       comment = Blockly.utils.string.wrap(comment,
-        Blockly.JavaScript.COMMENT_WRAP - 3);
-      if (block.getProcedureDef) {
-        // Use a comment block for function comments.
-        commentCode += '/**\n' +
-                       Blockly.JavaScript.prefixLines(comment + '\n', ' * ') +
-                       ' */\n';
-      } else {
-        commentCode += Blockly.JavaScript.prefixLines(comment + '\n', '// ');
-      }
+          Blockly.JavaScript.COMMENT_WRAP - 3);
+      commentCode += Blockly.JavaScript.prefixLines(comment + '\n', '// ');
     }
     // Collect comments for all value arguments.
     // Don't collect comments for nested statements.

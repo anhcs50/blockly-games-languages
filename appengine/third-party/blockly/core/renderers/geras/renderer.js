@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2019 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +25,7 @@ goog.provide('Blockly.geras.Renderer');
 
 goog.require('Blockly.blockRendering');
 goog.require('Blockly.blockRendering.Renderer');
+goog.require('Blockly.geras.ConstantProvider');
 goog.require('Blockly.geras.Drawer');
 goog.require('Blockly.geras.HighlightConstantProvider');
 goog.require('Blockly.geras.PathObject');
@@ -63,6 +61,13 @@ Blockly.utils.object.inherits(Blockly.geras.Renderer,
 Blockly.geras.Renderer.prototype.init = function() {
   Blockly.geras.Renderer.superClass_.init.call(this);
   this.highlightConstants_ = this.makeHighlightConstants_();
+};
+
+/**
+ * @override
+ */
+Blockly.geras.Renderer.prototype.makeConstants_ = function() {
+  return new Blockly.geras.ConstantProvider();
 };
 
 /**

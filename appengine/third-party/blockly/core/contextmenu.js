@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2011 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2011 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -344,6 +341,9 @@ Blockly.ContextMenu.commentDuplicateOption = function(comment) {
  * @package
  */
 Blockly.ContextMenu.workspaceCommentOption = function(ws, e) {
+  if (!Blockly.WorkspaceCommentSvg) {
+    throw Error('Missing require for Blockly.WorkspaceCommentSvg');
+  }
   // Helper function to create and position a comment correctly based on the
   // location of the mouse event.
   var addWsComment = function() {

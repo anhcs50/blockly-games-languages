@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2012 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2012 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +42,7 @@ goog.require('Blockly.utils.userAgent');
  * Class for an editable text field.
  * @param {string=} opt_value The initial value of the field. Should cast to a
  *    string. Defaults to an empty string if null or undefined.
- * @param {Function=} opt_validator A function that is called to validate
+ * @param {?Function=} opt_validator A function that is called to validate
  *    changes to the field's value. Takes in a string & returns a validated
  *    string, or null to abort the change.
  * @param {Object=} opt_config A map of options used to configure the field.
@@ -58,7 +55,7 @@ Blockly.FieldTextInput = function(opt_value, opt_validator, opt_config) {
   /**
    * Allow browser to spellcheck this field.
    * @type {boolean}
-   * @private
+   * @protected
    */
   this.spellcheck_ = true;
 
@@ -67,6 +64,26 @@ Blockly.FieldTextInput = function(opt_value, opt_validator, opt_config) {
   }
   Blockly.FieldTextInput.superClass_.constructor.call(this,
       opt_value, opt_validator, opt_config);
+
+  /**
+   * The HTML input element.
+   * @type {HTMLElement}
+   */
+  this.htmlInput_ = null;
+
+  /**
+   * Key down event data.
+   * @type {?Blockly.EventData}
+   * @private
+   */
+  this.onKeyDownWrapper_ = null;
+
+  /**
+   * Key input event data.
+   * @type {?Blockly.EventData}
+   * @private
+   */
+  this.onKeyInputWrapper_ = null;
 };
 Blockly.utils.object.inherits(Blockly.FieldTextInput, Blockly.Field);
 
@@ -80,14 +97,13 @@ Blockly.utils.object.inherits(Blockly.FieldTextInput, Blockly.Field);
  */
 Blockly.FieldTextInput.fromJson = function(options) {
   var text = Blockly.utils.replaceMessageReferences(options['text']);
-  return new Blockly.FieldTextInput(text, null, options);
+  return new Blockly.FieldTextInput(text, undefined, options);
 };
 
 /**
  * Serializable fields are saved by the XML renderer, non-serializable fields
  * are not. Editable fields should also be serializable.
  * @type {boolean}
- * @const
  */
 Blockly.FieldTextInput.prototype.SERIALIZABLE = true;
 
@@ -147,7 +163,7 @@ Blockly.FieldTextInput.prototype.doValueInvalid_ = function(_invalidValue) {
     this.value_ = this.htmlInput_.untypedDefaultValue_;
     if (this.sourceBlock_ && Blockly.Events.isEnabled()) {
       Blockly.Events.fire(new Blockly.Events.BlockChange(
-          this.sourceBlock_, 'field', this.name, oldValue, this.value_));
+          this.sourceBlock_, 'field', this.name || null, oldValue, this.value_));
     }
   }
 };
@@ -156,7 +172,8 @@ Blockly.FieldTextInput.prototype.doValueInvalid_ = function(_invalidValue) {
  * Called by setValue if the text input is valid. Updates the value of the
  * field, and updates the text of the field if it is not currently being
  * edited (i.e. handled by the htmlInput_).
- * @param {string} newValue The new validated value of the field.
+ * @param {*} newValue The value to be saved. The default validator guarantees
+ * that this is a string.
  * @protected
  */
 Blockly.FieldTextInput.prototype.doValueUpdate_ = function(newValue) {
@@ -186,12 +203,15 @@ Blockly.FieldTextInput.prototype.render_ = function() {
     } else {
       this.resizeEditor_();
     }
+    var htmlInput = /** @type {!HTMLElement} */(this.htmlInput_);
     if (!this.isTextValid_) {
-      Blockly.utils.dom.addClass(this.htmlInput_, 'blocklyInvalidInput');
-      Blockly.utils.aria.setState(this.htmlInput_, 'invalid', true);
+      Blockly.utils.dom.addClass(htmlInput, 'blocklyInvalidInput');
+      Blockly.utils.aria.setState(htmlInput,
+          Blockly.utils.aria.State.INVALID, true);
     } else {
-      Blockly.utils.dom.removeClass(this.htmlInput_, 'blocklyInvalidInput');
-      Blockly.utils.aria.setState(this.htmlInput_, 'invalid', false);
+      Blockly.utils.dom.removeClass(htmlInput, 'blocklyInvalidInput');
+      Blockly.utils.aria.setState(htmlInput,
+          Blockly.utils.aria.State.INVALID, false);
     }
   }
 };
@@ -295,34 +315,28 @@ Blockly.FieldTextInput.prototype.widgetCreate_ = function() {
 };
 
 /**
- * Close the editor, save the results, and dispose any events bound to the
- * text input's editor.
+ * Closes the editor, saves the results, and disposes of any events or
+ * dom-references belonging to the editor.
  * @private
  */
 Blockly.FieldTextInput.prototype.widgetDispose_ = function() {
-  // Finalize value.
+  // Non-disposal related things that we do when the editor closes.
   this.isBeingEdited_ = false;
   this.isTextValid_ = true;
-
-  // Always re-render when the we close the editor as value
-  // set on the field's node may be inconsistent with the field's
-  // internal value.
+  // Make sure the field's node matches the field's internal value.
   this.forceRerender();
-
-  // Call onFinishEditing
-  // TODO: Get rid of this or make it less of a hack.
+  // TODO(#2496): Make this less of a hack.
   if (this.onFinishEditing_) {
     this.onFinishEditing_(this.value_);
   }
 
-  // Remove htmlInput events.
+  // Actual disposal.
   this.unbindInputEvents_();
-
-  // Delete style properties.
   var style = Blockly.WidgetDiv.DIV.style;
   style.width = 'auto';
   style.height = 'auto';
   style.fontSize = '';
+  this.htmlInput_ = null;
 };
 
 /**
@@ -347,8 +361,12 @@ Blockly.FieldTextInput.prototype.bindInputEvents_ = function(htmlInput) {
  * @private
  */
 Blockly.FieldTextInput.prototype.unbindInputEvents_ = function() {
-  Blockly.unbindEvent_(this.onKeyDownWrapper_);
-  Blockly.unbindEvent_(this.onKeyInputWrapper_);
+  if (this.onKeyDownWrapper_) {
+    Blockly.unbindEvent_(this.onKeyDownWrapper_);
+  }
+  if (this.onKeyInputWrapper_) {
+    Blockly.unbindEvent_(this.onKeyInputWrapper_);
+  }
 };
 
 /**

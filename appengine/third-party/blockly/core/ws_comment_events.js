@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2018 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +32,8 @@ goog.require('Blockly.Events.Abstract');
 goog.require('Blockly.utils.Coordinate');
 goog.require('Blockly.utils.object');
 goog.require('Blockly.utils.xml');
-goog.require('Blockly.Xml');
+// TODO: Fix recursive dependency.
+// goog.require('Blockly.Xml');
 
 
 /**
@@ -64,7 +62,7 @@ Blockly.Events.CommentBase = function(comment) {
    * perspective, and should be undone together.
    * @type {string}
    */
-  this.group = Blockly.Events.group_;
+  this.group = Blockly.Events.getGroup();
 
   /**
    * Sets whether the event should be added to the undo stack.
@@ -317,7 +315,7 @@ Blockly.Events.CommentMove = function(comment) {
 
   /**
    * The location after the move, in workspace coordinates.
-   * @type {!Blockly.utils.Coordinate}
+   * @type {Blockly.utils.Coordinate}
    */
   this.newCoordinate_ = null;
 };

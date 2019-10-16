@@ -1,9 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
- *
- * Copyright 2013 Google Inc.
- * https://developers.google.com/blockly/
+ * Copyright 2013 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +28,6 @@
  * @namespace
  */
 goog.provide('Blockly.WidgetDiv');
-
-goog.require('Blockly.Css');
 
 goog.require('Blockly.utils.style');
 
