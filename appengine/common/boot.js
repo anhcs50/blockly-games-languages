@@ -26,7 +26,7 @@
 // Redirect to new domain.
 if (location.host == 'blockly-games.appspot.com') {
   location.replace('https://blockly.games' +
-      location.pathname + location.search + location.hash);
+    location.pathname + location.search + location.hash);
 }
 
 (function() {
@@ -35,14 +35,10 @@ if (location.host == 'blockly-games.appspot.com') {
   appName = appName ? appName[1].replace('-', '/') : 'index';
 
   // Supported languages (consistent across all apps).
-  window['BlocklyGamesLanguages'] = ['en','vi'];
+  window['BlocklyGamesLanguages'] = ['en', 'vi'];
 
-  // Use a series of heuristics that determine the likely language of this user.
-  // First choice: The URL specified language.
-
-  // Save this explicit choice as cookie.
-  var exp = (new Date(Date.now() + 2 * 31536000000)).toUTCString();
-  document.cookie = 'lang=' + escape(lang) + '; expires=' + exp + 'path=/';
+  var param = location.search.match(/[?&]lang=([^&]+)/);
+  var lang = param ? param[1].replace(/\+/g, '%20') : null;
   // Second choice: Language cookie.
   var cookie = document.cookie.match(/(^|;)\s*lang=([\w\-]+)/);
   lang = cookie ? unescape(cookie[2]) : null;
@@ -54,7 +50,7 @@ if (location.host == 'blockly-games.appspot.com') {
       lang = 'en';
     }
   }
-    
+
   window['BlocklyGamesLang'] = lang;
 
   // Load the chosen language pack.
@@ -69,7 +65,7 @@ if (location.host == 'blockly-games.appspot.com') {
     // Don't even think of throwing an error.
   }
   script.src = appName + '/generated/' + lang +
-      (debug ? '/uncompressed.js' : '/compressed.js');
+    (debug ? '/uncompressed.js' : '/compressed.js');
   script.type = 'text/javascript';
   document.head.appendChild(script);
 })();
