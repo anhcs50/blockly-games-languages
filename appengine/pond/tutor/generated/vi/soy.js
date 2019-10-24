@@ -22,7 +22,7 @@ if (goog.DEBUG) {
 
 
 Pond.Tutor.soy.start = function(opt_data, opt_ignored, opt_ijData) {
-  var output = Pond.Tutor.soy.messages(null, null, opt_ijData) + '<table width="100%"><tr><td><h1>' + BlocklyGames.soy.titleSpan({appName: 'Nh\u1EADp m\u00F4n \u0111\u1EA1i chi\u1EBFn'}, null, opt_ijData) + BlocklyGames.soy.levelLinks({level: opt_ijData.level, maxLevel: opt_ijData.maxLevel, lang: opt_ijData.lang, suffix: ''}, null, opt_ijData) + '</h1></td><td class="farSide"><select id="languageMenu"></select>&nbsp;<button id="linkButton" title="Save and link to blocks."><img src="common/1x1.gif" class="link icon21"></button>&nbsp;<button id="helpButton">Help</button></td></tr></table>' + Pond.soy.visualization(null, null, opt_ijData);
+  var output = Pond.Tutor.soy.messages(null, null, opt_ijData) + '<table width="100%"><tr><td><h1>' + BlocklyGames.soy.titleSpan({appName: 'Nh\u1EADp m\u00F4n \u0111\u1EA1i chi\u1EBFn'}, null, opt_ijData) + BlocklyGames.soy.levelLinks({level: opt_ijData.level, maxLevel: opt_ijData.maxLevel, lang: opt_ijData.lang, suffix: ''}, null, opt_ijData) + '</h1></td><td class="farSide"><select id="languageMenu"></select>&nbsp;<button id="linkButton" title="Save and link to blocks."><img src="common/1x1.gif" class="link icon21"></button>&nbsp;<button id="helpButton">H\u01B0\u1EDBng d\u1EABn</button></td></tr></table>' + Pond.soy.visualization(null, null, opt_ijData);
   switch (opt_ijData.level) {
     case 1:
     case 3:
