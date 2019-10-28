@@ -76,6 +76,7 @@
 	"Puzzle.helpText": "Đối với mỗi con vật: Chọn hình ảnh, số chân và sắp xếp các đặc điểm của nó.",
 	"Maze.moveForward": "Đi thẳng",
 	"Maze.turnLeft": "Rẽ trái",
+	"Maze.turnRight": "Rẽ phải",
 	"Maze.doCode": "thực hiện",
 	"Maze.elseCode": "ngược lại",
 	"Maze.helpIfElse": "Khối lệnh If-else(Nếu-ngược lại) sẽ thực hiện công việc khi đúng hoặc sai",
