@@ -144,6 +144,7 @@ Music.init = function() {
   BlocklyGames.workspace = Blockly.inject('blockly',
       {'disable': false,
        'media': 'third-party/blockly/media/',
+       'oneBasedIndex': false,
        'rtl': rtl,
        'toolbox': toolbox,
        'zoom': {
@@ -189,9 +190,9 @@ Music.init = function() {
   BlocklyGames.bindClick('resetButton', Music.resetButtonClick);
 
   // Lazy-load the JavaScript interpreter.
-  setTimeout(BlocklyInterface.importInterpreter, 1);
+  BlocklyInterface.importInterpreter();
   // Lazy-load the syntax-highlighting.
-  setTimeout(BlocklyInterface.importPrettify, 1);
+  BlocklyInterface.importPrettify();
   // Lazy-load the sounds.
   setTimeout(Music.importSounds, 1);
 

@@ -1,11 +1,10 @@
 {
 	"@metadata": {
 		"author": "Neil Fraser <fraser@google.com>",
-		"lastupdated": "2019-10-18 14:14:33.036310",
+		"lastupdated": "2019-10-31 19:07:56.505952",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
-	
 	"Games.name": "Blockly Games",
 	"Games.puzzle": "Puzzle",
 	"Games.maze": "Maze",

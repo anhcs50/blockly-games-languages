@@ -76,6 +76,7 @@ Pond.Tutor.init = function() {
     var toolbox = document.getElementById('toolbox');
     BlocklyGames.workspace = Blockly.inject('blockly',
         {'media': 'third-party/blockly/media/',
+         'oneBasedIndex': false,
          'rtl': false,
          'toolbox': toolbox,
          'trashcan': true});
@@ -128,13 +129,7 @@ Pond.Tutor.init = function() {
     } else {
       defaultCode = 'cannon(0, 70);';
     }
-    BlocklyInterface.editor = window['ace']['edit']('editor');
-    BlocklyInterface.editor['setTheme']('ace/theme/chrome');
-    BlocklyInterface.editor['setShowPrintMargin'](false);
-    var session = BlocklyInterface.editor['getSession']();
-    session['setMode']('ace/mode/javascript');
-    session['setTabSize'](2);
-    session['setUseSoftTabs'](true);
+    BlocklyInterface.makeAceSession();
     BlocklyInterface.loadBlocks(defaultCode + '\n');
 
     var onresize = function(e) {
@@ -144,6 +139,9 @@ Pond.Tutor.init = function() {
       editorDiv.style.width = (window.innerWidth - 440) + 'px';
     };
     window.addEventListener('scroll', onresize);
+
+    // Lazy-load the ESx-ES5 transpiler.
+    BlocklyInterface.importBabel();
   }
 
   window.addEventListener('resize', onresize);

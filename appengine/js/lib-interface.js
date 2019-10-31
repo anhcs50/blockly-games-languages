@@ -64,10 +64,6 @@ BlocklyInterface.init = function() {
     languageMenu.addEventListener('change',
         BlocklyInterface.changeLanguage, true);
   }
-
-  // Switch to zero-based indexing so that later JS levels match the blocks.
-  Blockly.Blocks && (Blockly.Blocks.ONE_BASED_INDEXING = false);
-  Blockly.JavaScript && (Blockly.JavaScript.ONE_BASED_INDEXING = false);
 };
 
 /**
@@ -153,6 +149,57 @@ BlocklyInterface.getCode = function() {
   }
   return text;
 };
+
+/**
+ * Create an ACE editor, and return the session object.
+ * @return {!Object} ACE session object
+ */
+BlocklyInterface.makeAceSession = function() {
+  var ace = window['ace'];
+  ace['require']('ace/ext/language_tools');
+  var editor = ace['edit']('editor');
+  BlocklyInterface.editor = editor;
+  editor['setTheme']('ace/theme/chrome');
+  editor['setShowPrintMargin'](false);
+  editor['setOptions']({
+    'enableBasicAutocompletion': true,
+    'enableLiveAutocompletion': true
+  });
+  var session = editor['getSession']();
+  session['setMode']('ace/mode/javascript');
+  session['setTabSize'](2);
+  session['setUseSoftTabs'](true);
+  BlocklyInterface.removeUnsupportedKeywords();
+  return session;
+};
+
+/**
+ * Remove keywords not supported by the JS Interpreter.
+ * This trims out bogus entries in the autocomplete.
+ */
+BlocklyInterface.removeUnsupportedKeywords = function() {
+  var keywords = BlocklyInterface.editor['getSession']()['getMode']()['$highlightRules']['$keywordList'];
+  if (keywords) {
+    keywords.splice(0, Infinity, 'arguments', 'this', 'NaN', 'Math', 'JSON',
+        'parseInt', 'parseFloat', 'isNaN', 'isFinite', 'eval', 'String',
+        'RegExp', 'Object', 'Number', 'Function', 'Date', 'Boolean', 'Array',
+        'while', 'var', 'let', 'typeof', 'try', 'throw', 'switch', 'return',
+        'new', 'instanceof', 'of', 'in', 'if', 'function', 'for', 'finally',
+        'else', 'do', 'delete', 'continue', 'catch', 'case', 'break', 'const',
+        'undefined', 'Infinity', 'null', 'false', 'true');
+  } else {
+    // Keyword list doesn't appear until after the JS mode is loaded.
+    // Keep polling until it shows up.
+    setTimeout(BlocklyInterface.removeUnsupportedKeywords,
+        BlocklyInterface.removeUnsupportedKeywords.delay_ *= 2);
+  }
+};
+
+/**
+ * Exponential back-off for polling.  Start at 1ms.
+ * @private
+ */
+BlocklyInterface.removeUnsupportedKeywords.delay_ = 1;
 
 /**
  * Return the main workspace.
@@ -295,31 +342,72 @@ BlocklyInterface.eventSpam.previousDate_ = 0;
 
 /**
  * Load the JavaScript interpreter.
+ * Defer loading until page is loaded and responsive.
  */
 BlocklyInterface.importInterpreter = function() {
-  //<script type="text/javascript"
-  //  src="third-party/JS-Interpreter/compressed.js"></script>
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = 'third-party/JS-Interpreter/compressed.js';
-  document.head.appendChild(script);
+  function load() {
+    //<script type="text/javascript"
+    //  src="third-party/JS-Interpreter/compressed.js"></script>
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'third-party/JS-Interpreter/compressed.js';
+    document.head.appendChild(script);
+  }
+  setTimeout(load, 1);
 };
 
 /**
  * Load the Prettify CSS and JavaScript.
+ * Defer loading until page is loaded and responsive.
  */
 BlocklyInterface.importPrettify = function() {
-  //<link rel="stylesheet" type="text/css" href="common/prettify.css">
-  //<script type="text/javascript" src="common/prettify.js"></script>
-  var link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.type = 'text/css';
-  link.href = 'common/prettify.css';
-  document.head.appendChild(link);
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = 'common/prettify.js';
-  document.head.appendChild(script);
+  function load() {
+    //<link rel="stylesheet" type="text/css" href="common/prettify.css">
+    //<script type="text/javascript" src="common/prettify.js"></script>
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = 'common/prettify.css';
+    document.head.appendChild(link);
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'common/prettify.js';
+    document.head.appendChild(script);
+  }
+  setTimeout(load, 1);
+};
+
+/**
+ * Load the Babel transpiler.
+ * Defer loading until page is loaded and responsive.
+ */
+BlocklyInterface.importBabel = function() {
+  function load() {
+    //<script type="text/javascript"
+    //  src="third-party/babel.min.js"></script>
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'third-party/babel.min.js';
+    document.head.appendChild(script);
+  }
+  setTimeout(load, 1);
+};
+
+/**
+ * Attempt to transpile user code to ES5.
+ * @param {string} code User code that may contain ES6+ syntax.
+ * @return {string|undefined} ES5 code, or undefined if Babel not loaded.
+ * @throws SyntaxError if code is unparsable.
+ */
+BlocklyInterface.transpileToEs5 = function(code) {
+  if (typeof Babel != 'object') {
+    return undefined;
+  }
+  var options = {
+    'presets': ['es2015']
+  };
+  var fish = Babel.transform(code, options);
+  return fish.code;
 };
 
 // Export symbols that would otherwise be renamed by Closure compiler.

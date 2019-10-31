@@ -26,6 +26,7 @@ goog.provide('Pond.Avatar');
 goog.require('Blockly.utils.Coordinate');
 goog.require('Blockly.utils.math');
 goog.require('BlocklyGames');
+goog.require('BlocklyInterface');
 
 
 /**
@@ -118,17 +119,26 @@ Pond.Avatar.prototype.reset = function() {
   // Face the centre.
   this.degree = Pond.Avatar.pointsToAngle(this.loc.x, this.loc.y, 50, 50);
   this.facing = this.degree;
+  this.interpreter = null;
+};
+
+/**
+ * Create an interpreter for this avatar.
+ */
+Pond.Avatar.prototype.initInterpreter = function() {
   var code = this.code_;
   if (typeof code == 'function') {
     code = code();
   } else if (typeof code != 'string') {
-    throw Error('Avatar ' + this.name + ' has invalid code: ' + code);
+    throw Error('Duck "' + this.name + '" has invalid code: ' + code);
   }
-  if ('Interpreter' in window) {
-    this.interpreter = new Interpreter(code, this.battle_.initInterpreter);
-  } else {
-    this.interpreter = null;
+  try {
+    code = BlocklyInterface.transpileToEs5(code) || code;
+  } catch (e) {
+    alert(e);
+    throw Error('Duck "' + this.name + '" has error in code:\n' + e);
   }
+  this.interpreter = new Interpreter(code, this.battle_.initInterpreter);
 };
 
 /**
