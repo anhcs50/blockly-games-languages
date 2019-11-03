@@ -251,7 +251,7 @@
 	"Pond.documentation": "Tài liệu",
 	"Pond.playerName": "Người chơi",
 	"Pond.targetName": "Mục tiêu",
-	"Pond.pendulumName": "Con lắc",
+	"Pond.pendulumName": "Mục tiêu",
 	"Pond.scaredName": "Sợ hãi",
 	"Pond.helpUseScan": "Giải pháp của bạn hoạt động, nhưng bạn có thể làm tốt hơn. Sử dụng 'quét' để cho pháo biết bắn bao xa.",
 	"Pond.helpText1": "Sử dụng lệnh 'pháo' để bắn trúng mục tiêu. Tham số đầu tiên là góc, tham số thứ hai là phạm vi. Tìm sự kết hợp đúng.",
