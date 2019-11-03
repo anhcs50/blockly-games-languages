@@ -14,7 +14,7 @@ goog.require('Pond.soy');
 
 
 Pond.Tutor.soy.messages = function(opt_data, opt_ignored, opt_ijData) {
-  return Pond.soy.messages(null, null, opt_ijData) + '<div style="display: none"><span id="Pond_playerName">Ng\u01B0\u1EDDi ch\u01A1i</span><span id="Pond_targetName">M\u1EE5c ti\u00EAu</span><span id="Pond_pendulumName">Con l\u1EAFc</span><span id="Pond_scaredName">S\u1EE3 h\u00E3i</span></div>';
+  return Pond.soy.messages(null, null, opt_ijData) + '<div style="display: none"><span id="Pond_playerName">Ng\u01B0\u1EDDi ch\u01A1i</span><span id="Pond_targetName">M\u1EE5c ti\u00EAu</span><span id="Pond_pendulumName">M\u1EE5c ti\u00EAu</span><span id="Pond_scaredName">S\u1EE3 h\u00E3i</span></div>';
 };
 if (goog.DEBUG) {
   Pond.Tutor.soy.messages.soyTemplateName = 'Pond.Tutor.soy.messages';
