@@ -124,6 +124,7 @@ window.CLOSURE_NO_DEPS = true;
       "pond/tutor/generated/en/msg.js",
       "js/lib-interface.js",
       "js/lib-dialogs.js",
+      "js/lib-ace.js",
       "pond/js/avatar.js",
       "pond/js/battle.js",
       "third-party/blockly/generators/javascript.js",
