@@ -24,6 +24,7 @@
 goog.provide('Pond.Tutor');
 
 goog.require('Blockly.utils.Coordinate');
+goog.require('BlocklyAce');
 goog.require('BlocklyDialogs');
 goog.require('BlocklyGames');
 goog.require('BlocklyInterface');
@@ -76,6 +77,7 @@ Pond.Tutor.init = function() {
     var toolbox = document.getElementById('toolbox');
     BlocklyGames.workspace = Blockly.inject('blockly',
         {'media': 'third-party/blockly/media/',
+         'oneBasedIndex': false,
          'rtl': false,
          'toolbox': toolbox,
          'trashcan': true});
@@ -128,13 +130,7 @@ Pond.Tutor.init = function() {
     } else {
       defaultCode = 'cannon(0, 70);';
     }
-    BlocklyInterface.editor = window['ace']['edit']('editor');
-    BlocklyInterface.editor['setTheme']('ace/theme/chrome');
-    BlocklyInterface.editor['setShowPrintMargin'](false);
-    var session = BlocklyInterface.editor['getSession']();
-    session['setMode']('ace/mode/javascript');
-    session['setTabSize'](2);
-    session['setUseSoftTabs'](true);
+    BlocklyAce.makeAceSession();
     BlocklyInterface.loadBlocks(defaultCode + '\n');
 
     var onresize = function(e) {
@@ -144,12 +140,15 @@ Pond.Tutor.init = function() {
       editorDiv.style.width = (window.innerWidth - 440) + 'px';
     };
     window.addEventListener('scroll', onresize);
+
+    // Lazy-load the ESx-ES5 transpiler.
+    BlocklyAce.importBabel();
   }
 
   window.addEventListener('resize', onresize);
   onresize(null);
 
-  for (var avatarData, i = 0; avatarData = Pond.Tutor.PLAYERS[i]; i++) {
+  for (var avatarData, i = 0; (avatarData = Pond.Tutor.PLAYERS[i]); i++) {
     if (avatarData.code) {
       var div = document.getElementById(avatarData.code);
       var code = div.textContent;

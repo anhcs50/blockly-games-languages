@@ -2,9 +2,9 @@
 # Definitions
 ##############################
 
-USER_APPS = puzzle maze bird turtle movie music pond/docs pond/tutor pond/duck
-ALL_JSON = ./ puzzle maze bird turtle movie music pond/docs pond pond/tutor pond/duck
-ALL_TEMPLATES = appengine/templates/template.soy,appengine/templates/puzzle/template.soy,appengine/templates/maze/template.soy,appengine/templates/bird/template.soy,appengine/templates/turtle/template.soy,appengine/templates/movie/template.soy,appengine/templates/music/template.soy,appengine/templates/pond/docs/template.soy,appengine/templates/pond/template.soy,appengine/templates/pond/tutor/template.soy,appengine/templates/pond/duck/template.soy,appengine/templates/gallery/template.soy
+USER_APPS = puzzle maze bird turtle movie music pond/tutor pond/duck
+ALL_JSON = ./ puzzle maze bird turtle movie music pond pond/tutor pond/duck
+ALL_TEMPLATES = appengine/templates/template.soy,appengine/templates/puzzle/template.soy,appengine/templates/maze/template.soy,appengine/templates/bird/template.soy,appengine/templates/turtle/template.soy,appengine/templates/movie/template.soy,appengine/templates/music/template.soy,appengine/templates/pond/template.soy,appengine/templates/pond/tutor/template.soy,appengine/templates/pond/duck/template.soy,appengine/templates/gallery/template.soy
 
 APP_ENGINE_THIRD_PARTY = appengine/third-party
 SOY_COMPILER = java -jar third-party-downloads/SoyToJsSrcCompiler.jar --shouldProvideRequireSoyNamespaces --isUsingIjData

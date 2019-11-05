@@ -150,7 +150,7 @@ Pond.Battle.reset = function() {
   Pond.Battle.MISSILES.length = 0;
   Pond.Battle.RANK.length = 0;
   Pond.Battle.ticks = 0;
-  for (var i = 0, avatar; avatar = Pond.Battle.AVATARS[i]; i++) {
+  for (var i = 0, avatar; (avatar = Pond.Battle.AVATARS[i]); i++) {
     avatar.reset();
   }
 };
@@ -181,6 +181,14 @@ Pond.Battle.start = function(doneCallback) {
   Pond.Battle.endTime_ = Date.now() + Pond.Battle.TIME_LIMIT;
   console.log('Starting battle with ' + Pond.Battle.AVATARS.length +
               ' avatars.');
+  for (var i = 0, avatar; (avatar = Pond.Battle.AVATARS[i]); i++) {
+    try {
+      avatar.initInterpreter();
+    } catch (e) {
+      console.log(avatar + ' fails to load: ' + e);
+      avatar.die();
+    }
+  }
   Pond.Battle.update();
 };
 
@@ -212,7 +220,7 @@ Pond.Battle.update = function() {
 Pond.Battle.stop = function() {
   // Add the survivors to the ranks based on their damage.
   var survivors = [];
-  for (var i = 0, avatar; avatar = Pond.Battle.AVATARS[i]; i++) {
+  for (var i = 0, avatar; (avatar = Pond.Battle.AVATARS[i]); i++) {
     if (!avatar.dead) {
       survivors.push(avatar);
     }
@@ -239,7 +247,7 @@ Pond.Battle.updateMissiles_ = function() {
       // Boom.
       Pond.Battle.MISSILES.splice(i, 1);
       // Damage any avatar in range.
-      for (var j = 0, avatar; avatar = Pond.Battle.AVATARS[j]; j++) {
+      for (var j = 0, avatar; (avatar = Pond.Battle.AVATARS[j]); j++) {
         if (avatar.dead) {
           continue;
         }
@@ -261,7 +269,7 @@ Pond.Battle.updateMissiles_ = function() {
  * @private
  */
 Pond.Battle.updateAvatars_ = function() {
-  for (var i = 0, avatar; avatar = Pond.Battle.AVATARS[i]; i++) {
+  for (var i = 0, avatar; (avatar = Pond.Battle.AVATARS[i]); i++) {
     if (avatar.dead) {
       continue;
     }
@@ -328,7 +336,7 @@ Pond.Battle.updateAvatars_ = function() {
 Pond.Battle.updateInterpreters_ = function() {
   for (var j = 0; j < Pond.Battle.STATEMENTS_PER_FRAME; j++) {
     Pond.Battle.ticks++;
-    for (var i = 0, avatar; avatar = Pond.Battle.AVATARS[i]; i++) {
+    for (var i = 0, avatar; (avatar = Pond.Battle.AVATARS[i]); i++) {
       if (avatar.dead) {
         continue;
       }
@@ -460,7 +468,7 @@ Pond.Battle.initInterpreter = function(interpreter, scope) {
 Pond.Battle.closestNeighbour = function(avatar) {
   var closest = null;
   var distance = Infinity;
-  for (var i = 0, neighbour; neighbour = Pond.Battle.AVATARS[i]; i++) {
+  for (var i = 0, neighbour; (neighbour = Pond.Battle.AVATARS[i]); i++) {
     if (!neighbour.dead && avatar != neighbour) {
       var thisDistance = Math.min(distance,
           Blockly.utils.Coordinate.distance(avatar.loc, neighbour.loc));

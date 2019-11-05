@@ -27,6 +27,7 @@ goog.require('Blockly.FlyoutButton');
 goog.require('Blockly.utils.Coordinate');
 goog.require('Blockly.utils.dom');
 goog.require('Blockly.ZoomControls');
+goog.require('BlocklyAce');
 goog.require('BlocklyDialogs');
 goog.require('BlocklyGames');
 goog.require('BlocklyInterface');
@@ -107,7 +108,7 @@ Pond.Duck.init = function() {
         Math.max(0, top + tabDiv.offsetHeight - window.pageYOffset) + 'px';
     var divLeft = rtl ? '10px' : '420px';
     var divWidth = (window.innerWidth - 440) + 'px';
-    for (var i = 0, div; div = divs[i]; i++) {
+    for (var i = 0, div; (div = divs[i]); i++) {
       div.style.top = divTop;
       div.style.left = divLeft;
       div.style.width = divWidth;
@@ -121,21 +122,19 @@ Pond.Duck.init = function() {
   onresize(null);
 
   // Inject JS editor.
-  var defaultCode = 'cannon(0, 70);';
-  BlocklyInterface.editor = window['ace']['edit']('editor');
-  BlocklyInterface.editor['setTheme']('ace/theme/chrome');
-  BlocklyInterface.editor['setShowPrintMargin'](false);
-  var session = BlocklyInterface.editor['getSession']();
-  session['setMode']('ace/mode/javascript');
-  session['setTabSize'](2);
-  session['setUseSoftTabs'](true);
+  var session = BlocklyAce.makeAceSession();
   session['on']('change', Pond.Duck.editorChanged);
+  var defaultCode = 'cannon(0, 70);';
   BlocklyInterface.editor['setValue'](defaultCode, -1);
+
+  // Lazy-load the ESx-ES5 transpiler.
+  BlocklyAce.importBabel();
 
   // Inject Blockly.
   var toolbox = document.getElementById('toolbox');
   BlocklyGames.workspace = Blockly.inject('blockly',
       {'media': 'third-party/blockly/media/',
+       'oneBasedIndex': false,
        'rtl': false,
        'toolbox': toolbox,
        'trashcan': true,
@@ -192,7 +191,7 @@ Pond.Duck.init = function() {
     }
   ];
 
-  for (var playerData, i = 0; playerData = players[i]; i++) {
+  for (var playerData, i = 0; (playerData = players[i]); i++) {
     if (playerData.code) {
       var div = document.getElementById(playerData.code);
       var code = div.textContent;
@@ -222,13 +221,13 @@ Pond.Duck.changeTab = function(index) {
   var JAVASCRIPT = 1;
   // Show the correct tab contents.
   var names = ['blockly', 'editor'];
-  for (var i = 0, name; name = names[i]; i++) {
+  for (var i = 0, name; (name = names[i]); i++) {
     var div = document.getElementById(name);
     div.style.visibility = (i == index) ? 'visible' : 'hidden';
   }
   // Show/hide Blockly divs.
   var names = ['.blocklyTooltipDiv', '.blocklyToolboxDiv'];
-  for (var i = 0, name; name = names[i]; i++) {
+  for (var i = 0, name; (name = names[i]); i++) {
     var div = document.querySelector(name);
     div.style.visibility = (index == BLOCKS) ? 'visible' : 'hidden';
   }
