@@ -114,6 +114,7 @@ languages: createDir copyTemplates copyModule soy-to-json
 	done
 
 modifiedLanguages: createDir copyModifiedTemplates copyModule soy-to-json
+	cp -R appengine/modifiedTemplates/maze/js appengine/maze
 	@for app in $(ALL_JSON); do \
 	  echo "Generating JS from appengine/$$app/template.soy"; \
 	  mkdir -p appengine/$$app/generated; \
