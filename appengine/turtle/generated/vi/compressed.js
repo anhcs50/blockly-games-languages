@@ -1,5 +1,5 @@
 // Automatically generated file.  Do not edit!
- // This version is modified by viet1pro, Komaz from MIS!
+// This version is modified by viet1pro, Komaz, Baonamdao from MIS!
 
 'use strict';var b,g={g:{}};g.g.global=function(){return"object"===typeof self?self:"object"===typeof window?window:"object"===typeof global?global:this}();
 g.h={};g.g.global.Blockly||(g.g.global.Blockly={});g.g.global.Blockly.Msg||(g.g.global.Blockly.Msg=g.h);g.g.T=function(a,c){this.x=a;this.y=c};g.g.T.$e=function(a,c){return a==c?!0:a&&c?a.x==c.x&&a.y==c.y:!1};g.g.T.yy=function(a,c){var d=a.x-c.x;a=a.y-c.y;return Math.sqrt(d*d+a*a)};g.g.T.HG=function(a){return Math.sqrt(a.x*a.x+a.y*a.y)};g.g.T.Ym=function(a,c){return new g.g.T(a.x-c.x,a.y-c.y)};g.g.T.sum=function(a,c){return new g.g.T(a.x+c.x,a.y+c.y)};g.g.T.prototype.scale=function(a){this.x*=a;this.y*=a;return this};g.g.T.prototype.translate=function(a,c){this.x+=a;this.y+=c;return this};g.g.rb={};g.g.rb.startsWith=function(a,c){return 0==a.lastIndexOf(c,0)};g.g.rb.Kv=function(a){return a.length?a.reduce(function(c,d){return c.length<d.length?c:d}).length:0};g.g.rb.GE=function(a,c){if(!a.length)return 0;if(1==a.length)return a[0].length;var d=0;c=c||g.g.rb.Kv(a);for(var e=0;e<c;e++){for(var f=a[0][e],h=1;h<a.length;h++)if(f!=a[h][e])return d;" "==f&&(d=e+1)}for(h=1;h<a.length;h++)if((f=a[h][e])&&" "!=f)return d;return c};

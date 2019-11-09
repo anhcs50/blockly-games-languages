@@ -1,5 +1,5 @@
 // Automatically generated file.  Do not edit!
- // This version is modified by viet1pro, Komaz from MIS!
+// This version is modified by viet1pro, Komaz, Baonamdao from MIS!
 
 'use strict';var b,g={g:{}};g.g.J=function(a,c){this.x=a;this.y=c};g.g.J.Ue=function(a,c){return a==c?!0:a&&c?a.x==c.x&&a.y==c.y:!1};g.g.J.Dp=function(a,c){var d=a.x-c.x;a=a.y-c.y;return Math.sqrt(d*d+a*a)};g.g.J.EG=function(a){return Math.sqrt(a.x*a.x+a.y*a.y)};g.g.J.Vm=function(a,c){return new g.g.J(a.x-c.x,a.y-c.y)};g.g.J.sum=function(a,c){return new g.g.J(a.x+c.x,a.y+c.y)};g.g.J.prototype.scale=function(a){this.x*=a;this.y*=a;return this};
 g.g.J.prototype.translate=function(a,c){this.x+=a;this.y+=c;return this};g.g.object={};g.g.object.Y=function(a,c){a.w=c.prototype;a.prototype=Object.create(c.prototype);a.prototype.constructor=a};g.g.object.zl=function(a,c){for(var d in c)a[d]=c[d]};g.g.object.values=function(a){return Object.values?Object.values(a):Object.keys(a).map(function(c){return a[c]})};g.m={};g.m.Jq={};g.m.Yq=!1;g.m.register=function(a,c){if(g.m.Jq[a])throw Error("Renderer has already been registered.");g.m.Jq[a]=c};g.m.eN=function(){g.m.Yq=!0};g.m.fN=function(){g.m.Yq=!1};g.m.S=function(a){function c(){c.w.constructor.call(this)}if(!g.m.Jq[a])throw Error("Renderer not registered: ",a);g.g.object.Y(c,g.m.Jq[a]);a=new c;a.S();return a};
