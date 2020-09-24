@@ -7,7 +7,7 @@ Requirements:
 - You need `make` installed
 - You need `python3` installed
 
-Run 'sudo make languages' to build js files
+Run `sudo make languages` to build js files
 
 #### Creating a custom languages file
 
