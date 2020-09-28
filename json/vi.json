@@ -107,7 +107,7 @@
 	"Maze.helpWallFollow": "Nếu bạn không thể giải quyết mê cung phức tạp này? Hãy thử đi theo bức tường bên trái.Tiến lên nào!",
 	"Bird.noWorm": "không có sâu",
 	"Bird.heading": "Mục tiêu",
-	"Bird.noWormTooltip": "Tình trạng khi chưa có sâu.",
+	"Bird.noWormTooltip": "Điều kiên khi không có sâu.",
 	"Bird.headingTooltip": "Di chuyển theo hướng của góc đã cho: 0 là bên phải, 90 là thẳng lên, v.v.",
 	"Bird.positionTooltip": "x và y đánh dấu vị trí của chim. Khi x = 0 con chim ở gần cạnh trái, khi x = 100 nó ở gần cạnh phải. Khi y = 0 con chim ở dưới cùng, khi y = 100 nó ở trên cùng.",
 	"Bird.helpHeading": "Thay đổi góc ] để làm cho chim lấy được sâu và bay về trong tổ của nó.",
