@@ -258,7 +258,7 @@
 	"Pond.helpText2": "Mục tiêu này cần phải được đánh nhiều lần. Sử dụng vòng lặp 'while (true)' để làm điều gì đó vô thời hạn.",
 	"Pond.helpText3a": "Đối thủ này di chuyển qua lại, khiến nó khó bị đánh trúng. Biểu thức 'quét' trả về phạm vi chính xác cho đối thủ theo hướng được chỉ định.",
 	"Pond.helpText3b": "Phạm vi này chính xác là những gì lệnh 'pháo' cần bắn chính xác.",
-	"Pond.helpText4": "Đối thủ này ở quá xa để sử dụng khẩu pháo (có giới hạn 70 mét). Thay vào đó, sử dụng lệnh 'bơi' để bắt đầu bơi về phía đối thủ và đâm sầm vào nó.",
+	"Pond.helpText4": "Đối thủ này ở quá xa để sử dụng khẩu pháo (có giới hạn 70 mét). Thay vào đó, sử dụng lệnh 'bơi' để bắt đầu bơi về phía đối thủ và đâm vào nó.",
 	"Pond.helpText5": "Đối thủ này cũng ở quá xa để sử dụng pháo. Nhưng bạn quá yếu để sống sót sau một vụ va chạm. Bơi về phía đối thủ trong khi vị trí nằm ngang của bạn nhỏ hơn 50. Sau đó, 'dừng lại' và sử dụng khẩu pháo.",
 	"Pond.helpText6": "Đối thủ này sẽ di chuyển đi khi bị bắn trúng. Bơi về phía nó nếu nó nằm ngoài phạm vi (70 mét). ",
 	"Pond.rabbitName": "Thỏ",
