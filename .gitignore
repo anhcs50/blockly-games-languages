@@ -1,3 +1,5 @@
 
 *.svn-base
 json/en.json
+third-party-downloads/*
+.DS_Store
