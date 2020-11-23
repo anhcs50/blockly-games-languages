@@ -3,3 +3,7 @@
 json/en.json
 third-party-downloads/*
 .DS_Store
+appengine/
+third-party/
+i18n/
+third-party/
