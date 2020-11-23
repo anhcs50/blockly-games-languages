@@ -142,10 +142,10 @@ deps:
 	cd blockly-source
 	git submodule init
 	git submodule update
-	cp blockly-source/appengine appengine
-	cp blockly-source/externs externs
-	cp blockly-source/i18n i18n
-	cp blockly-source/third-party third-party
+	cp -r blockly-source/appengine appengine
+	cp -r blockly-source/externs externs
+	cp -r blockly-source/i18n i18n
+	cp -r blockly-source/third-party third-party
 	mkdir -p third-party-downloads
 	@# All following commands are in third-party-downloads, use backslashes to keep them on the same line as the cd command.
 	cd third-party-downloads; \
