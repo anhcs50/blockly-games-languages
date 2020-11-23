@@ -137,9 +137,11 @@ languages: soy-to-json
 	done
 
 deps:
-	git clone blockly-source
 	$(foreach bin,$(REQUIRED_BINS),\
 	    $(if $(shell command -v $(bin) 2> /dev/null),$(info Found `$(bin)`),$(error Please install `$(bin)`)))
+	cd blockly-source
+	git submodule init
+	git submodule update
 	cp blockly-source/appengine appengine
 	cp blockly-source/externs externs
 	cp blockly-source/i18n i18n
