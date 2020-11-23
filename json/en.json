@@ -1,10 +1,9 @@
 {
 	"@metadata": {
 		"author": "Neil Fraser <fraser@google.com>",
-		"lastupdated": "2019-11-09 09:03:07.605498",
+		"lastupdated": "2020-11-23 22:03:49.622171",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
-	
 	},
 	"Games.name": "STEAM Games",
 	"Games.puzzle": "Puzzle",
@@ -48,6 +47,11 @@
 	"Games.blocks": "Blocks",
 	"Games.congratulations": "Congratulations!",
 	"Games.helpAbort": "This level is extremely difficult. Would you like to skip it and go onto the next game? You can always come back later.",
+	"Index.clear": "Delete all your solutions?",
+	"Index.subTitle": "Games for tomorrow's programmers.",
+	"Index.moreInfo": "Info for educators...",
+	"Index.startOver": "Want to start over?",
+	"Index.clearData": "Clear data",
 	"Puzzle.animal1": "Duck",
 	"Puzzle.animal1Trait1": "Feathers",
 	"Puzzle.animal1Trait2": "Beak",
@@ -231,7 +235,7 @@
 	"Music.helpText2a": "A 'function' allows you to group blocks together, then run them more than once.",
 	"Music.helpText2b": "Create a function to play the first four notes of 'Frère Jacques'. Run that function twice.  Don't add any new note blocks.",
 	"Music.helpText3": "Create a second function for the next part of 'Frère Jacques'. The last note is longer.",
-	"Music.helpText4": "Create a third function for the next part of 'Frère Jacques'. The first four notes are shorter.<x id='START_BREAK'/><x id='START_IMAGE'/>",
+	"Music.helpText4": "Create a third function for the next part of 'Frère Jacques'. The first four notes are shorter.",
 	"Music.helpText5": "Complete the full tune of 'Frère Jacques'.",
 	"Music.helpText6a": "This new block lets you change to another instrument.",
 	"Music.helpText6b": "Play your tune with a violin.",
@@ -249,6 +253,7 @@
 	"Pond.speedTooltip": "Returns the current speed of the player (0 is stopped, 100 is full speed).",
 	"Pond.locXTooltip": "Returns the X coordinate of the player (0 is the left edge, 100 is the right edge).",
 	"Pond.locYTooltip": "Returns the Y coordinate of the player (0 is the bottom edge, 100 is the top edge).",
+	"Pond.logTooltip": "Prints a number to your browser's console.",
 	"Pond.docsTooltip": "Display the language documentation.",
 	"Pond.documentation": "Documentation",
 	"Pond.playerName": "Player",
@@ -263,9 +268,5 @@
 	"Pond.helpText4": "This opponent is too far away to use the cannon (which has a limit of 70 meters). Instead, use the 'swim' command to start swimming towards the opponent and crash into it.",
 	"Pond.helpText5": "This opponent is also too far away to use the cannon. But you are too weak to survive a collision. Swim towards the opponent while your horizontal location is less than than 50. Then 'stop' and use the cannon.",
 	"Pond.helpText6": "This opponent will move away when it is hit. Swim towards it if it is out of range (70 meters).",
-	"Pond.rabbitName": "Rabbit",
-	"Pond.counterName": "Counter",
-	"Pond.rookName": "Rook",
-	"Pond.sniperName": "Sniper",
 	"Gallery": "Gallery"
 }
