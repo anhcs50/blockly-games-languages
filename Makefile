@@ -138,12 +138,12 @@ languages: soy-to-json
 
 deps:
 	git clone blockly-source
+	$(foreach bin,$(REQUIRED_BINS),\
+	    $(if $(shell command -v $(bin) 2> /dev/null),$(info Found `$(bin)`),$(error Please install `$(bin)`)))
 	cp blockly-source/appengine appengine
 	cp blockly-source/externs externs
 	cp blockly-source/i18n i18n
 	cp blockly-source/third-party third-party
-	$(foreach bin,$(REQUIRED_BINS),\
-	    $(if $(shell command -v $(bin) 2> /dev/null),$(info Found `$(bin)`),$(error Please install `$(bin)`)))
 	mkdir -p third-party-downloads
 	@# All following commands are in third-party-downloads, use backslashes to keep them on the same line as the cd command.
 	cd third-party-downloads; \
