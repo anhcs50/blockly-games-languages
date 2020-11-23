@@ -2,9 +2,9 @@
 # Definitions
 ##############################
 
-USER_APPS = {index,puzzle,maze,bird,turtle,movie,music,pond/docs,pond/tutor,pond/duck,gallery}
-ALL_JSON = {./,index,puzzle,maze,bird,turtle,movie,music,pond/docs,pond,pond/tutor,pond/duck,gallery}
-ALL_TEMPLATES = appengine/template.soy,appengine/index/template.soy,appengine/puzzle/template.soy,appengine/maze/template.soy,appengine/bird/template.soy,appengine/turtle/template.soy,appengine/movie/template.soy,appengine/music/template.soy,appengine/pond/docs/template.soy,appengine/pond/template.soy,appengine/pond/tutor/template.soy,appengine/pond/duck/template.soy,appengine/gallery/template.soy
+USER_APPS = puzzle maze bird turtle movie music pond/tutor pond/duck
+ALL_JSON = ./ puzzle maze bird turtle movie music pond pond/tutor pond/duck
+ALL_TEMPLATES = appengine/templates/template.soy,appengine/templates/puzzle/template.soy,appengine/templates/maze/template.soy,appengine/templates/bird/template.soy,appengine/templates/turtle/template.soy,appengine/templates/movie/template.soy,appengine/templates/music/template.soy,appengine/templates/pond/template.soy,appengine/templates/pond/tutor/template.soy,appengine/templates/pond/duck/template.soy,appengine/templates/gallery/template.soy
 
 APP_ENGINE_THIRD_PARTY = appengine/third-party
 SOY_COMPILER = java -jar third-party-downloads/SoyToJsSrcCompiler.jar --shouldProvideRequireSoyNamespaces --isUsingIjData
@@ -17,64 +17,6 @@ REQUIRED_BINS = svn unzip wget java python sed
 ##############################
 
 all: deps languages
-
-index-en:
-	mkdir -p appengine/generated/en/
-	$(SOY_COMPILER) --outputPathFormat appengine/index/generated/en/soy.js --srcs blockly-source/appengine/index/template.soy
-	python build-app.py index en
-
-puzzle-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/puzzle/generated/en/soy.js --srcs blockly-source/appengine/puzzle/template.soy
-	python build-app.py puzzle en
-
-maze-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/maze/generated/en/soy.js --srcs blockly-source/appengine/maze/template.soy
-	python build-app.py maze en
-
-bird-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/bird/generated/en/soy.js --srcs appengine/bird/template.soy
-	python build-app.py bird en
-
-turtle-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/turtle/generated/en/soy.js --srcs appengine/turtle/template.soy
-	python build-app.py turtle en
-
-movie-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/movie/generated/en/soy.js --srcs appengine/movie/template.soy
-	python build-app.py movie en
-
-music-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/music/generated/en/soy.js --srcs appengine/music/template.soy
-	python build-app.py music en
-
-pond-docs-en:
-	mkdir -p appengine/pond/generated/en/
-	$(SOY_COMPILER) --outputPathFormat appengine/pond/docs/generated/en/soy.js --srcs appengine/pond/docs/template.soy
-	python build-app.py pond/docs en
-
-pond-tutor-en: pond-common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/pond/tutor/generated/en/soy.js --srcs appengine/pond/tutor/template.soy
-	python build-app.py pond/tutor en
-
-pond-duck-en: pond-common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/pond/duck/generated/en/soy.js --srcs appengine/pond/duck/template.soy
-	python build-app.py pond/duck en
-
-genetics-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/genetics/generated/en/soy.js --srcs appengine/genetics/template.soy
-	python build-app.py genetics en
-
-gallery-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/gallery/generated/en/soy.js --srcs appengine/gallery/template.soy
-	python build-app.py gallery en
-
-pond-common-en: common-en
-	$(SOY_COMPILER) --outputPathFormat appengine/pond/generated/en/soy.js --srcs appengine/pond/template.soy
-
-common-en:
-	$(SOY_COMPILER) --outputPathFormat appengine/generated/en/soy.js --srcs appengine/template.soy
-
-en: index-en puzzle-en maze-en bird-en turtle-en movie-en music-en pond-docs-en pond-tutor-en pond-duck-en genetics-en gallery-en
 
 index puzzle maze bird turtle movie music gallery: common
 	@echo "Generating JS from appengine/$@/template.soy"
@@ -116,6 +58,41 @@ common: soy-to-json
 	i18n/json_to_js.py --output_dir appengine/generated --template appengine/template.soy json/*.json;
 	@echo
 
+createDir:
+	@echo "Create dir";	
+	@for app in $(USER_APPS); do \
+		mkdir -p appengine/$$app; \
+	done
+
+copyTemplates:
+	@echo "Copy templates";	
+	mkdir -p appengine/templates; 
+	@for app in $(USER_APPS); do \
+		mkdir -p appengine/templates/$$app; \
+		cp ../blockly-games/appengine/$$app/template.soy appengine/templates/$$app;\
+	done
+	sudo cp ../blockly-games/appengine/template.soy appengine/templates;\
+	sudo cp ../blockly-games/appengine/pond/template.soy appengine/templates/pond/template.soy;\
+	mkdir -p appengine/templates/gallery;\
+	sudo cp ../blockly-games/appengine/gallery/template.soy appengine/templates/gallery/template.soy;\
+
+copyModifiedTemplates:
+	@echo "Copy modified templates";
+	cp -R appengine/modifiedTemplates/* appengine/templates
+
+copyModule:
+	@echo "Copy module";
+	sudo cp -R ../blockly-games/i18n ../blockly-games/third-party ../blockly-games/externs .
+	sudo rm -rf appengine/third-party/
+	sudo cp -R ../blockly-games/appengine/third-party appengine
+	sudo cp appengine/common/boot.js .
+	sudo cp -R ../blockly-games/appengine/common/ ../blockly-games/appengine/js appengine
+	sudo mv boot.js appengine/common/boot.js
+	cp -R ../blockly-games/appengine/pond/js/ appengine/pond
+	@for app in $(USER_APPS); do \
+		cp -R ../blockly-games/appengine/$$app/js/ appengine/$$app;\
+	done
+
 soy-to-json:
 	@echo "Converting Soy files to JSON for Translatewiki."
 	@# Create extracted_msgs.xlf with all messages from all soy files.
@@ -125,18 +102,30 @@ soy-to-json:
 	i18n/xliff_to_json.py --xlf extracted_msgs.xlf --templates $(ALL_TEMPLATES)
 	@echo
 
-languages: soy-to-json
+languages: createDir copyTemplates copyModule soy-to-json
 	@for app in $(ALL_JSON); do \
 	  echo "Generating JS from appengine/$$app/template.soy"; \
 	  mkdir -p appengine/$$app/generated; \
-	  i18n/json_to_js.py --output_dir appengine/$$app/generated --template appengine/$$app/template.soy json/*.json; \
+	  i18n/json_to_js.py --output_dir appengine/$$app/generated --template appengine/templates/$$app/template.soy json/*.json; \
 	  echo; \
 	done
 	@for app in $(USER_APPS); do \
 	  python build-app.py $$app; \
 	done
 
-deps:
+modifiedLanguages: createDir copyModifiedTemplates copyModule soy-to-json
+	cp -R appengine/modifiedTemplates/maze/js appengine/maze
+	@for app in $(ALL_JSON); do \
+	  echo "Generating JS from appengine/$$app/template.soy"; \
+	  mkdir -p appengine/$$app/generated; \
+	  i18n/json_to_js.py --output_dir appengine/$$app/generated --template appengine/templates/$$app/template.soy json/*.json; \
+	  echo; \
+	done
+	@for app in $(USER_APPS); do \
+	  python build-app.py $$app; \
+	done
+
+deps:	
 	$(foreach bin,$(REQUIRED_BINS),\
 	    $(if $(shell command -v $(bin) 2> /dev/null),$(info Found `$(bin)`),$(error Please install `$(bin)`)))
 	mkdir -p third-party-downloads
@@ -147,32 +136,27 @@ deps:
 	unzip -o closure-templates-for-javascript-latest.zip SoyToJsSrcCompiler.jar; \
 	wget -N https://dl.google.com/closure-templates/closure-templates-msg-extractor-latest.zip; \
 	unzip -o closure-templates-msg-extractor-latest.zip SoyMsgExtractor.jar; \
-	wget -N https://unpkg.com/google-closure-compiler-java/compiler.jar; \
-	mv -f compiler.jar closure-compiler.jar; \
+	wget -N https://dl.google.com/closure-compiler/compiler-latest.zip; \
+	unzip -o compiler-latest.zip -x COPYING README.md; \
+	mv -f closure-compiler-v*.jar closure-compiler.jar; \
 	chmod +x build/closurebuilder.py
 
 	mkdir -p $(APP_ENGINE_THIRD_PARTY)
-	wget -N https://unpkg.com/@babel/standalone@7.6.4/babel.min.js
-	mv babel.min.js $(APP_ENGINE_THIRD_PARTY)/
 	svn checkout --force https://github.com/ajaxorg/ace-builds/trunk/src-min-noconflict/ $(APP_ENGINE_THIRD_PARTY)/ace
 	mkdir -p $(APP_ENGINE_THIRD_PARTY)/blockly
-	svn checkout https://github.com/google/blockly/trunk/blocks/ $(APP_ENGINE_THIRD_PARTY)/blockly/blocks
-	svn checkout https://github.com/google/blockly/trunk/core/ $(APP_ENGINE_THIRD_PARTY)/blockly/core
-	svn checkout https://github.com/google/blockly/trunk/externs/ $(APP_ENGINE_THIRD_PARTY)/blockly/externs
-	svn checkout https://github.com/google/blockly/trunk/generators/ $(APP_ENGINE_THIRD_PARTY)/blockly/generators
-	svn checkout https://github.com/google/blockly/trunk/media/ $(APP_ENGINE_THIRD_PARTY)/blockly/media
-	svn checkout https://github.com/google/blockly/trunk/msg/ $(APP_ENGINE_THIRD_PARTY)/blockly/msg
+	svn checkout https://github.com/google/blockly/branches/develop/blocks $(APP_ENGINE_THIRD_PARTY)/blockly/blocks
+	svn checkout https://github.com/google/blockly/branches/develop/core $(APP_ENGINE_THIRD_PARTY)/blockly/core
+	svn checkout https://github.com/google/blockly/branches/develop/externs $(APP_ENGINE_THIRD_PARTY)/blockly/externs
+	svn checkout https://github.com/google/blockly/branches/develop/generators $(APP_ENGINE_THIRD_PARTY)/blockly/generators
+	svn checkout https://github.com/google/blockly/branches/develop/media $(APP_ENGINE_THIRD_PARTY)/blockly/media
+	svn checkout https://github.com/google/blockly/branches/develop/msg $(APP_ENGINE_THIRD_PARTY)/blockly/msg
 	svn checkout https://github.com/CreateJS/SoundJS/trunk/lib/ $(APP_ENGINE_THIRD_PARTY)/SoundJS
 	cp third-party/base.js $(APP_ENGINE_THIRD_PARTY)/
 	cp third-party/soyutils.js $(APP_ENGINE_THIRD_PARTY)/
 	cp -R third-party/soundfonts $(APP_ENGINE_THIRD_PARTY)/
 
-	@# Blockly's externs include extra files we don't want.
-	rm -f $(APP_ENGINE_THIRD_PARTY)/blockly/externs/block-externs.js
-	rm -f $(APP_ENGINE_THIRD_PARTY)/blockly/externs/generator-externs.js
-
 	@# Blockly's date field needs Closure.  But we don't use it.
-	rm -f $(APP_ENGINE_THIRD_PARTY)/blockly/core/field_date.js
+	rm -r $(APP_ENGINE_THIRD_PARTY)/blockly/core/field_date.js
 
 	svn checkout https://github.com/NeilFraser/JS-Interpreter/trunk/ $(APP_ENGINE_THIRD_PARTY)/JS-Interpreter
 	@# Remove @license tag so compiler will strip Google's license.

@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # Compresses the files for one game into a single JavaScript file.
 #
-# Copyright 2013 Google LLC
+# Copyright 2013 Google Inc.
+# https://github.com/google/blockly-games
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,11 +38,8 @@ import threading
 WARNING = '// Automatically generated file.  Do not edit!\n// This version is modified by viet1pro, Komaz, Baonamdao from MIS!\n'
 
 
-messageNames = []
-
 def main(name, lang):
   if lang != None:
-    filterMessages(name, lang)
     language(name, lang)
   else:
     # Extract the list of supported languages from boot.js.
@@ -51,82 +49,35 @@ def main(name, lang):
     boot.close()
     m = re.search('\[\'BlocklyGamesLanguages\'\] = (\[[-,\'\\s\\w]+\])', js)
     if not m:
-      raise Exception("Can't find BlocklyGamesLanguages in boot.js")
+      print("Can't find BlocklyGamesLanguages in boot.js")
+      raise
     langs = m.group(1)
     langs = langs.replace("'", '"')
     langs = json.loads(langs)
-    filterMessages(name, langs[0])
     for lang in langs:
       language(name, lang)
 
 
-def filterMessages(name, lang):
-  global messageNames
-  # Do a dummy compile and identify all the Blockly messages used.
-  print("Scanning for Blockly messages in %s..." % name)
-  f = open('appengine/%s/generated/%s/msg.js' % (name, lang), 'w')
-  f.write("""
-goog.provide('BlocklyGames.Msg');
-goog.require('Blockly.Msg');
-Blockly.Msg["ybr8uu2q3b"] = '';
-""")
-  f.close()
-  thread0 = Gen_compressed(name, lang)
-  thread0.start()
-  thread0.join()
-  f = open('appengine/%s/generated/%s/compressed.js' % (name, lang), 'r')
-  js = f.read()
-  f.close()
-  # Locate what Blockly.Msg has compiled into (e.g. h.Y)
-  m = re.search('([\w.$]+)\.ybr8uu2q3b=', js)
-  if m:
-    blocklyMsg = m.group(1)
-    blocklyMsg = blocklyMsg.replace('.', '\\.').replace('$', '\\$')
-    msgs1 = re.findall('\W' + blocklyMsg + '.([A-Z0-9_]+)', js);
-    msgs2 = re.findall('\WBKY_([A-Z0-9_]+)', js);
-    messageNames = list(set(msgs1 + msgs2))
-    # Resolve references.
-    # Blockly.Msg["TEXT_APPEND_VAR"] = Blockly.Msg["VAR_DEFAULT_NAME"];
-    # Does not handle long chains of references.
-    msgs = getMessages(lang)
-    for msg in msgs:
-      m = re.search('Blockly\.Msg\["([A-Z0-9_]+)"\] = Blockly\.Msg\["([A-Z0-9_]+)"\]', msg)
-      if m and m.group(1) in messageNames:
-        messageNames.append(m.group(2))
-  messageNames.sort()
-  print("Found %d Blockly messages." % len(messageNames))
-
-
-def getMessages(lang):
+def language(name, lang):
   # Read Blockly's message file for this language (default to English).
-  blocklyMsgFileName = 'appengine/third-party/blockly/msg/js/%s.js' % lang;
+  blocklyMsgFileName = '/mnt/c/Users/viet1/Downloads/Programs/misBlocklyVietnamesePacks/appengine/third-party/blockly/msg/js/%s.js' % lang;
   if not os.path.exists(blocklyMsgFileName):
     blocklyMsgFileName = 'appengine/third-party/blockly/msg/js/en.js';
   f = open(blocklyMsgFileName, 'r')
-  msgs = f.readlines()
+  msgs = f.read()
   f.close()
-  return msgs
-
-
-def language(name, lang):
-  global messageNames
-  msgs = getMessages(lang)
-  # Write copy to Blockly Games.
-  f = open('appengine/%s/generated/%s/msg.js' % (name, lang), 'w')
-  for msg in msgs:
-    if msg == "'use strict';\n":
-      f.write("""'use strict';
+  # Add provides after 'use strict'.
+  msgs = msgs.replace("goog.", "//goog.")
+  msgs = msgs.replace("'use strict';\n", """'use strict';
 
 goog.provide('BlocklyGames.Msg');
 goog.require('Blockly.Msg');
 """)
-    else:
-      # Only write out messages that are used (as detected in filterMessages).
-      m = re.search('Blockly\.Msg\["([A-Z0-9_]+)"\] = ', msg)
-      if not m or m.group(1) in messageNames:
-        f.write(msg)
+  # Write copy to Blockly Games.
+  f = open('/mnt/c/Users/viet1/Downloads/Programs/misBlocklyVietnamesePacks/appengine/%s/generated/%s/msg.js' % (name, lang), 'w')
+  f.write(msgs)
   f.close()
-  print('Compiling %s - %s' % (name.title(), lang))
+  print('\n%s - %s' % (name.title(), lang))
   # Run uncompressed and compressed code generation in separate threads.
   # For multi-core computers, this offers a significant speed boost.
   thread1 = Gen_uncompressed(name, lang)
@@ -135,7 +86,6 @@ goog.require('Blockly.Msg');
   thread2.start()
   thread1.join()
   thread2.join()
-  print("")
 
 
 class Gen_uncompressed(threading.Thread):
@@ -149,7 +99,6 @@ class Gen_uncompressed(threading.Thread):
         '--root=appengine/third-party/',
         '--root=appengine/generated/%s/' % self.lang,
         '--root=appengine/js/',
-        '--exclude=',
         '--namespace=%s' % self.name.replace('/', '.').title(),
         '--output_mode=list']
     directory = self.name
@@ -160,7 +109,8 @@ class Gen_uncompressed(threading.Thread):
     try:
       proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     except:
-      raise Exception("Failed to Popen: %s" % ' '.join(cmd))
+      print("Failed to Popen: %s" % ' '.join(cmd))
+      raise
     files = readStdout(proc)
 
     if self.name == 'pond/docs':
@@ -174,9 +124,9 @@ class Gen_uncompressed(threading.Thread):
       if file[:len(prefix)] == prefix:
         file = file[len(prefix):]
       else:
-        raise Exception('"%s" is not in "%s".' % (file, prefix))
+        raise(Exception('"%s" is not in "%s".' % (file, prefix)))
       srcs.append('"%s%s"' % (path, file))
-    f = open('appengine/%s/generated/%s/uncompressed.js' %
+    f = open('/mnt/c/Users/viet1/Downloads/Programs/misBlocklyVietnamesePacks/appengine/%s/generated/%s/uncompressed.js' %
         (self.name, self.lang), 'w')
     f.write("""%s
 
@@ -215,7 +165,7 @@ class Gen_compressed(threading.Thread):
       '-jar', 'third-party-downloads/closure-compiler.jar',
       '--generate_exports',
       '--compilation_level', 'ADVANCED_OPTIMIZATIONS',
-      '--dependency_mode=PRUNE',
+      '--dependency_mode=STRICT',
       '--externs', 'externs/gviz-externs.js',
       '--externs', 'externs/interpreter-externs.js',
       '--externs', 'externs/prettify-externs.js',
@@ -248,7 +198,7 @@ class Gen_compressed(threading.Thread):
     script = self.trim_licence(script)
     print('Compressed to %d KB.' % (len(script) / 1024))
 
-    f = open('appengine/%s/generated/%s/compressed.js' %
+    f = open('/mnt/c/Users/viet1/Downloads/Programs/misBlocklyVietnamesePacks/appengine/%s/generated/%s/compressed.js' %
         (self.name, self.lang), 'w')
     f.write(WARNING)
     f.write(script)
@@ -269,9 +219,22 @@ class Gen_compressed(threading.Thread):
     """
     apache2 = re.compile("""/\\*
 
- (Copyright \\d+ (Google LLC|Massachusetts Institute of Technology))
-( All rights reserved.
-)? SPDX-License-Identifier: Apache-2.0
+ [\\w: ]+
+
+ (Copyright \\d+ (Google Inc.|Massachusetts Institute of Technology))
+ (https://developers.google.com/blockly/|All rights reserved.)
+
+ Licensed under the Apache License, Version 2.0 \\(the "License"\\);
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
 \\*/""")
     return re.sub(apache2, '', code)
 
