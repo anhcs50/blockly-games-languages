@@ -5,7 +5,7 @@
 Requirements:
 - You need `git` installed
 - You need `make` installed
-- You need `python3` installed
+- You need `python` installed
 
 Run `sudo make languages` to build js files
 
