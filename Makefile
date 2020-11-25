@@ -2,8 +2,8 @@
 # Definitions
 ##############################
 
-USER_APPS = {index,puzzle,maze,bird,turtle,movie,music,pond/docs,pond/tutor,pond/duck,gallery}
-ALL_JSON = {./,index,puzzle,maze,bird,turtle,movie,music,pond/docs,pond,pond/tutor,pond/duck,gallery}
+USER_APPS = index puzzle maze bird turtle movie music pond/docs pond/tutor pond/duck gallery
+ALL_JSON = ./ index puzzle maze bird turtle movie music pond/docs pond pond/tutor pond/duck gallery
 ALL_TEMPLATES = appengine/template.soy,appengine/index/template.soy,appengine/puzzle/template.soy,appengine/maze/template.soy,appengine/bird/template.soy,appengine/turtle/template.soy,appengine/movie/template.soy,appengine/music/template.soy,appengine/pond/docs/template.soy,appengine/pond/template.soy,appengine/pond/tutor/template.soy,appengine/pond/duck/template.soy,appengine/gallery/template.soy
 
 APP_ENGINE_THIRD_PARTY = appengine/third-party
