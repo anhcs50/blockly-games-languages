@@ -8,6 +8,7 @@ Requirements:
 - You need `python` installed
 
 Run `make deps` to install necessary dependents for compile
+
 Run `make languages` to build js files
 
 #### Creating a custom languages file
